@@ -162,7 +162,7 @@ require '../vendor/autoload.php';
                                 <div class="input-group has-validation">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1">
-                                            <i class="fa fa-signature"></i>
+                                            <i class="fa-solid fa-user"></i>
                                         </span>
                                     </div>
                                     <input type="text" class="form-control" id="input-nom" name="nom" placeholder="Nom" aria-label="Nom" aria-describedby="basic-addon1" value="<?php echo isset($_POST['nom']) ? $_POST['nom'] : ''; ?>">
@@ -173,7 +173,7 @@ require '../vendor/autoload.php';
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1">
-                                            <i class="fa fa-signature"></i>
+                                            <i class="fa-solid fa-user"></i>
                                         </span>
                                     </div>
                                     <input type="text" class="form-control" id="input-prenom" name="prenom" placeholder="Prénom" aria-label="Prénom" aria-describedby="basic-addon1" value="<?php echo isset($_POST['prenom']) ? $_POST['prenom'] : ''; ?>">
