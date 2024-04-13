@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// $json = file_get_contents('../categories.json');
+// $categories = json_decode($json, true);
 $categories = array(
     "Téléphones" => array(
         array(

@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($date_naissance)) {
-        $errors['date_naissance'] = "Veuillez entrer une date de naissance!";
+        $errors['date_naissance'] = "Veuillez entrer une date!";
     }
 
     if (empty($genre)) {
@@ -50,9 +50,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors['metier'] = "Veuillez choisir un métier!";
     }
     if (!empty($errors)) {
+        echo '<script>';
+        echo 'function displayErrors() {';
         foreach ($errors as $field => $error) {
-            echo "<div class='text-danger'>$error</div>";
+            echo '$("#error-'.$field.'").html("'.$error.'");';
+            echo '$("#input-'.$field.'").addClass("is-invalid");';
         }
+        echo '}';
+        echo '</script>';
     } else {
         // Si aucun erreur, procéder à l'envoi de l'email
         // Créer une instance de PHPMailer et envoyer l'email
@@ -180,13 +185,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <label>Genre:</label>
                                     <div class="form-check inline">
                                         <div class="custom-control custom-radio custom-control-inline">
-                                            <input <?php echo isset($_POST['genre']) && $_POST['genre'] == 'masculin' ? 'checked' : ''; ?> type="radio" id="customRadioInline1" name="genre" value="masculin" class="custom-control-input">
+                                            <input checked type="radio" id="customRadioInline1" name="genre" value="masculin" class="custom-control-input">
                                             <label class="custom-control-label" for="customRadioInline1">Masculin</label>
                                         </div>
                                     </div>
                                     <div class="form-check inline">
                                         <div class="custom-control custom-radio custom-control-inline">
-                                            <input <?php echo isset($_POST['genre']) && $_POST['genre'] == 'feminin' ? 'checked' : ''; ?> type="radio" id="customRadioInline2" name="genre" value="feminin" class="custom-control-input">
+                                            <input type="radio" id="customRadioInline2" name="genre" value="feminin" class="custom-control-input">
                                             <label class="custom-control-label" for="customRadioInline2">Féminin</label>
                                         </div>
                                     </div>
@@ -200,13 +205,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <i class="fa fa-calendar-days"></i>
                                         </span>
                                     </div>
-                                    <input id="input-date-naissance" name="date_naissance" class="form-control" type="date" value="<?php echo isset($_POST['date_naissance']) ? $_POST['date_naissance'] : ''; ?>" />
+                                    <input id="input-date_naissance" name="date_naissance" class="form-control" type="date" value="<?php echo isset($_POST['date_naissance']) ? $_POST['date_naissance'] : ''; ?>" />
                                 </div>
-                                <div class="text-danger" id="error-date-naissance"></div>
+                                <div class="text-danger" id="error-date_naissance"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="">Métier:</label>
-                                <select id="select-metier" class="form-select" name="metier" aria-label="Métier">
+                                <select id="input-metier" class="form-select" name="metier" aria-label="Métier">
                                     <option hidden value="Sélectionner">Sélectionner</option>
                                     <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'etudiant' ? 'selected' : ''; ?> value="etudiant">Étudiant(e)</option>
                                     <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'enseignant' ? 'selected' : ''; ?> value="enseignant">Enseignant(e)</option>
@@ -248,3 +253,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     </div>
 <?php include 'footer.php'; ?>
+<script>
+// Call the displayErrors function after the page has loaded
+document.addEventListener('DOMContentLoaded', function() {
+    displayErrors();
+});
+</script>
