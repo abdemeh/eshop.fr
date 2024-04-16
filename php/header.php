@@ -9,37 +9,24 @@ if (!isset($_SESSION['user_id']) && $current_page !== 'login.php' && $current_pa
     header("Location: login.php");
     exit;
 }
-if (!isset($_SESSION['role']) && $current_page !== 'login.php' && $current_page !== 'index.php') {
-    header("Location: login.php");
-    exit;
-}
 
 if (isset($_SESSION['user_id'])) {
-// Récupérer le nom d'utilisateur à partir de la session
-$user_id = $_SESSION['user_id'];
-
-// Lire le contenu du fichier utilisateurs.txt
-$utilisateurs = file("utilisateurs.txt", FILE_IGNORE_NEW_LINES);
-
-// Parcourir chaque utilisateur pour trouver celui correspondant à l'email de session
-foreach ($utilisateurs as $utilisateur) {
-    // Extraire les données de l'utilisateur en utilisant explode()
-    list($id, $nom, $prenom, $email, $mdp, $genre, $date_naissance, $metier, $role) = explode(":", $utilisateur);
-    // Vérifier si l'email correspond à celui de la session
-    if ($_SESSION['user_id'] == $id) {
-        
-        // Pré-remplir les champs du formulaire avec les données de l'utilisateur
-        $nom = $nom;
-        $prenom = $prenom;
-        $email = $email;
-        $mdp = $mdp;
-        $genre = $genre;
-        $date_naissance = $date_naissance;
-        $metier = $metier;
-        // Sortir de la boucle car l'utilisateur est trouvé
-        break;
+    $user_id = $_SESSION['user_id'];
+    $utilisateurs = file("utilisateurs.txt", FILE_IGNORE_NEW_LINES);
+    foreach ($utilisateurs as $utilisateur) {
+        list($id, $nom, $prenom, $email, $mdp, $genre, $date_naissance, $metier, $role) = explode(":", $utilisateur);
+        if ($_SESSION['user_id'] == $id) {
+            $nom = $nom;
+            $prenom = $prenom;
+            $email = $email;
+            $mdp = $mdp;
+            $genre = $genre;
+            $date_naissance = $date_naissance;
+            $metier = $metier;
+            break;
+        }
     }
-}}
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
