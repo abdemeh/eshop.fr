@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 include 'varSession.inc.php';
 
 $current_page = basename($_SERVER['PHP_SELF']);
-if (!isset($_SESSION['user']) && $current_page !== 'login.php' && $current_page !== 'index.php') {
+if (!isset($_SESSION['user_id']) && $current_page !== 'login.php' && $current_page !== 'index.php') {
     header("Location: login.php");
     exit;
 }
@@ -14,6 +14,7 @@ if (!isset($_SESSION['role']) && $current_page !== 'login.php' && $current_page 
     exit;
 }
 
+if (isset($_SESSION['user_id'])) {
 // Récupérer le nom d'utilisateur à partir de la session
 $user_id = $_SESSION['user_id'];
 
@@ -38,7 +39,7 @@ foreach ($utilisateurs as $utilisateur) {
         // Sortir de la boucle car l'utilisateur est trouvé
         break;
     }
-}
+}}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,7 +124,7 @@ foreach ($utilisateurs as $utilisateur) {
                     </li>
                 </ul>
             </div>
-
+    
             <!-- Modal -->
             <div id="confirmLogoutModal" class="modal fade" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
