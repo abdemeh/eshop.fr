@@ -9,6 +9,6 @@ if (isset($_POST['productId'])) {
 }
 
 // Redirect back to the cart page
-header('Location: panier.php');
+header('Location: ../panier.php');
 exit();
 ?>

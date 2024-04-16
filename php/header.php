@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include 'varSession.inc.php';
+include 'php/varSession.inc.php';
 
 $current_page = basename($_SERVER['PHP_SELF']);
 if (!isset($_SESSION['user_id']) && $current_page !== 'login.php' && $current_page !== 'index.php') {
@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id']) && $current_page !== 'login.php' && $current_pa
 
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
-    $utilisateurs = file("utilisateurs.txt", FILE_IGNORE_NEW_LINES);
+    $utilisateurs = file("txt/utilisateurs.txt", FILE_IGNORE_NEW_LINES);
     foreach ($utilisateurs as $utilisateur) {
         list($id, $nom, $prenom, $email, $mdp, $genre, $date_naissance, $metier, $role) = explode(":", $utilisateur);
         if ($_SESSION['user_id'] == $id) {
@@ -33,11 +33,11 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <title>eShop.fr</title>
     <meta charset="utf-8">
-    <link rel="icon" type="image/x-icon" href="../img/icon.png">
+    <link rel="icon" type="image/x-icon" href="img/icon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <meta name="robots" content="noindex, follow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,16 +47,29 @@ if (isset($_SESSION['user_id'])) {
 <div class="wrapper d-flex align-items-stretch">
     <nav id="sidebar" class="active">
         <div class="p-4 pt-5">
-            <a href="index.php" class="img logo rounded-circle mb-5" style="background-image: url(../img/profile.svg);"></a>
-            <ul class="list-unstyled components mb-5">
+            <a href="<?php if(isset($_SESSION['user_id'])){echo "profile.php";}else{echo "#";}?>" class="img logo rounded-circle mb-2" style="background-image: url(<?php
+                                                                                                    if(isset($_SESSION['user_id'])){
+                                                                                                    $userImagePath = "img/users/{$_SESSION['user_id']}.jpg";
+                                                                                                    if (file_exists("img/users/{$_SESSION['user_id']}.jpg")) {
+                                                                                                        echo "img/users/{$_SESSION['user_id']}.jpg";
+                                                                                                    }else {
+                                                                                                        echo "img/profile.svg";
+                                                                                                    }}else {
+                                                                                                        echo "img/profile.svg";}
+                                                                                                    ?>);"></a>
+            <div class="text-center">
+                <?php if (isset($_SESSION['user'])) {echo "<h5 class='mb-0'><a href='profile.php'><b>" . $prenom . " ". $nom ."</b></a></h5>";}?>
+            </div>
+            <ul class="list-unstyled components mb-5 mt-5">
                 <li>
                     <a href="index.php">Accueil</a>
                 </li>
                 <?php
                 // Parcourez les catégories et générez le menu de manière dynamique
                 foreach ($categories as $category => $products) {
+                    $encodedCategory = urlencode($category);
                     echo '<li>';
-                    echo '<a href="#">' . $category . '</a>';
+                    echo '<a href="produits.php?cat=' . $encodedCategory . '">' . $category . '</a>';
                     echo '</li>';
                 }
                 ?>
@@ -77,7 +90,7 @@ if (isset($_SESSION['user_id'])) {
                     <i class="fa fa-bars-staggered"></i>
                 </button>
                 <a class="navbar-brand" href="index.php">
-                    <img src="../img/logo.png" class="ml-2" height="30" alt="">
+                    <img src="img/logo.png" class="ml-2" height="30" alt="">
                 </a>
                 <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                     <ul class="nav navbar-nav">
@@ -103,7 +116,18 @@ if (isset($_SESSION['user_id'])) {
                         <?php if (isset($_SESSION['user'])) {echo "<p class='mb-0'> Bienvenue, <a href='profile.php'><b>" . $prenom . "</b></a>!</p>";}?>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-icon" href="profile.php"><i class="fa fa-user-circle"></i></a>
+                        <a class="nav-link nav-link-icon" href="profile.php"><?php
+                                                                            if (isset($_SESSION['user_id'])) {
+                                                                                $userImagePath = "img/users/{$_SESSION['user_id']}.jpg";
+                                                                                if (file_exists($userImagePath)) {
+                                                                                    echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
+                                                                                } else {
+                                                                                    echo "<i class='fa fa-user-circle'></i>";
+                                                                                }
+                                                                            } else {
+                                                                                echo "<i class='fa fa-user-circle'></i>";
+                                                                            }
+?></a>
                     </li>
                     <?php if (isset($_SESSION['user'])) {echo "<li class='nav-item'><a class='nav-link nav-link-icon' onclick='confirmLogout()' href='#'><i class='fa-solid fa-right-from-bracket'></i></a></li>";}?>
                     <li class="nav-item">
@@ -120,7 +144,7 @@ if (isset($_SESSION['user_id'])) {
                             <a>Êtes-vous sûr de vouloir vous déconnecter?</a>    
                         </div>
                         <div class="modal-footer">
-                            <a href="logout.php" class="btn">Oui</a>
+                            <a href="php/logout.php" class="btn">Oui</a>
                             <button type="button" class="btn" data-bs-dismiss="modal">Non</button>
                         </div>
                     </div>

@@ -1,255 +1,273 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-include 'php/varSession.inc.php';
+session_start();
+include 'php/header.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require 'vendor/autoload.php';
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <title>eShop.fr - Contactez-nous</title>
-    <meta charset="utf-8">
-    <link rel="icon" type="image/x-icon" href="img/icon.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <meta name="robots" content="noindex, follow">
-</head>
-
-<body>
-    <div class="wrapper d-flex align-items-stretch">
-        <nav id="sidebar" class="active">
-            <div class="p-4 pt-5">
-                <a href="index.php" class="img logo rounded-circle mb-5" style="background-image: url(img/profile.svg);"></a>
-                <ul class="list-unstyled components mb-5">
-                    <li>
-                        <a href="index.php">Accueil</a>
-                    </li>
-                    <li>
-                        <a href="téléphones.php">Téléphones</a>
-                    </li>
-                    <li>
-                        <a href="#">Ordinateurs</a>
-                    </li>
-                    <li>
-                        <a href="#">Montres connectées</a>
-                    </li>
-                    <li class="active">
-                        <a href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <div id="content" class="p-4 p-md-5">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn">
-                        <i class="fa fa-bars-staggered"></i>
-                        <span class="sr-only">Toggle Menu</span>
-                    </button>
-                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <i class="fa fa-bars-staggered"></i>
-                    </button>
-                    <a class="navbar-brand" href="index.php">
-                        <img src="img/logo.png" class="ml-2" height="30" alt="">
-                    </a>
-                    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link" href="index.php">Accueil</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="téléphones.php">Téléphones</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Ordinateurs</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Montres connectées</a>
-                            </li>
-                            <li class="nav-item active">
-                                <a class="nav-link" href="#">Contact</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <ul class="nav navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-icon" href="login.php"><i class="fa fa-user-circle"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-icon" href="#"><i class="fa fa-cart-shopping"></i></a>
-                        </li>  
-                    </ul>
+    <div class="container">
+        <h1 class="text-center font-weight-bold mb-4">Contactez-nous!</h1>
+        <div class="container">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-5 d-flex p-4">
+                    <img src="img/contact.svg" class="img-fluid p-4" alt="">
                 </div>
-            </nav>
-            <div class="container">
-                <h1 class="text-center font-weight-bold mb-4">Contactez-nous!</h1>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-5 d-flex p-4">
-                            <img src="img/contact.svg" class="img-fluid p-4" alt="">
-                        </div>
-                        <div class="col-5">
-                            <form id="contact-form">
-                                <div class="form-row">
-                                    <div class="col-md-12">
-                                        <div id="contact-error"></div>
+                <div class="col-5">
+                    <form id="contact-form" method="post">
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <div id="contact-message"></div>
+                                <?php 
+                                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                                    // Récupérer les données du formulaire
+                                    $nom = $_POST['nom'];
+                                    $prenom = $_POST['prenom'];
+                                    $email = $_POST['email'];
+                                    $genre = isset($_POST['genre']) ? $_POST['genre'] : '';
+                                    $date_naissance = $_POST['date_naissance'];
+                                    $metier = $_POST['metier'];
+                                    $sujet = $_POST['sujet'];
+                                    $message = $_POST['message'];
+                                
+                                    $errors = [];
+                                    if (empty($nom)) {
+                                        $errors['nom'] = "Veuillez entrer un nom!";
+                                    }
+                                
+                                    if (empty($prenom)) {
+                                        $errors['prenom'] = "Veuillez entrer un prénom!";
+                                    }
+                                
+                                    if (empty($email)) {
+                                        $errors['email'] = "Veuillez entrer un email!";
+                                    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                        $errors['email'] = "Veuillez entrer un email valide!";
+                                    }
+                                
+                                    if (empty($sujet)) {
+                                        $errors['sujet'] = "Veuillez entrer un sujet!";
+                                    }
+                                
+                                    if (empty($message)) {
+                                        $errors['message'] = "Veuillez entrer un message!";
+                                    }
+                                
+                                    if (empty($date_naissance)) {
+                                        $errors['date_naissance'] = "Veuillez entrer une date!";
+                                    }
+                                
+                                    if (empty($genre)) {
+                                        $errors['genre'] = "Veuillez sélectionner un genre!";
+                                    }
+                                
+                                    if ($metier == "Sélectionner") {
+                                        $errors['metier'] = "Veuillez choisir un métier!";
+                                    }
+                                    if (!empty($errors)) {
+                                        echo '<script>';
+                                        echo 'function displayErrors() {';
+                                        foreach ($errors as $field => $error) {
+                                            echo '$("#error-'.$field.'").html("'.$error.'");';
+                                            echo '$("#input-'.$field.'").addClass("is-invalid");';
+                                        }
+                                        echo '}';
+                                        echo '</script>';
+                                    } else {
+                                        // Si aucun erreur, procéder à l'envoi de l'email
+                                        // Créer une instance de PHPMailer et envoyer l'email
+                                    
+                                
+                                        if($metier =="etudiant"){
+                                            if($genre =="masculin"){
+                                                $metier="&Eacute;tudiant";
+                                            }elseif($genre =="feminin"){
+                                                $metier="&Eacute;tudiante";
+                                            }
+                                        }elseif($metier =="enseignant"){
+                                            if($genre =="masculin"){
+                                                $metier="Enseignant";
+                                            }elseif($genre =="feminin"){
+                                                $metier="Enseignante";
+                                            }
+                                        }elseif($metier =="ingenieur"){
+                                            if($genre =="masculin"){
+                                                $metier="Ingenieur";
+                                            }elseif($genre =="feminin"){
+                                                $metier="Ingenieure";
+                                            }
+                                        }else{
+                                            $metier="Autre";
+                                        }
+                                
+                                        if($genre =="masculin"){
+                                            $genre="Masculin";
+                                        }elseif($genre =="feminin"){
+                                            $genre="F&eacute;minin";
+                                        }
+                                
+                                        // Créer une instance de PHPMailer
+                                        $mail = new PHPMailer(true);
+                                
+                                        try {
+                                            // Configuration du serveur SMTP
+                                            $mail->isSMTP();
+                                            $mail->Host = 'smtp-mail.outlook.com';  // Nom du serveur SMTP
+                                            $mail->Port = 587;  // Port SMTP
+                                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Chiffrement SMTP
+                                            $mail->SMTPAuth = true;  // Authentification SMTP
+                                            $mail->Username = 'eshop.fr@outlook.com';  // Votre adresse e-mail Outlook
+                                            $mail->Password = '{WLCEtuM6]=U(6t';  // Votre mot de passe Outlook
+                                
+                                            // Destinataire et expéditeur
+                                            // $mail->setFrom($email, $nom . ' ' . $prenom);
+                                            $mail->addAddress('eshop.fr@outlook.com', 'eshop.fr');  // Adresse e-mail du destinataire
+                                            // $mail->addReplyTo($email, $nom . ' ' . $prenom);
+                                
+                                            // Contenu de l'e-mail
+                                            $mail->isHTML(true);
+                                            $mail->Subject = 'Nouveau message de contact de ' . $nom . ' ' . $prenom;
+                                            $mail->Body    = '
+                                                <h1>Nouveau message de contact</h1>
+                                                <p><strong>Nom:</strong> ' . $nom . '</p>
+                                                <p><strong>Pr&eacute;nom:</strong> ' . $prenom . '</p>
+                                                <p><strong>Email:</strong> ' . $email . '</p>
+                                                <p><strong>Genre:</strong> ' . $genre . '</p>
+                                                <p><strong>Date de naissance:</strong> ' . $date_naissance . '</p>
+                                                <p><strong>M&eacute;tier:</strong> ' . $metier . '</p>
+                                                <p><strong>Sujet:</strong> ' . $sujet . '</p>
+                                                <p><strong>Message:</strong> ' . $message . '</p>
+                                            ';
+                                
+                                            // Envoi de l'e-mail
+                                            $mail->send();
+                                            echo '<script>';
+                                            echo 'document.addEventListener("DOMContentLoaded", function() {';
+                                            echo 'var contactMessageDiv = document.querySelector("#contact-message");';
+                                            echo 'contactMessageDiv.innerHTML = \'<div class="alert alert-success" role="alert">Message envoyé avec succès.</div>\';';
+                                            echo '});';
+                                            echo '</script>';
+                                        } catch (Exception $e) {
+                                            echo '<script>';
+                                            echo 'document.addEventListener("DOMContentLoaded", function() {';
+                                            echo 'var contactMessageDiv = document.querySelector("#contact-message");';
+                                            echo 'contactMessageDiv.innerHTML = \'<div class="alert alert-danger" role="alert">Erreur lors de l&apos;envoi de l&apos;e-mail : '.$mail->ErrorInfo.'</div>\';';
+                                            echo '});';
+                                            echo '</script>';
+                                        }
+                                    }
+                                }
+                                ?> 
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="input-group has-validation">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa-solid fa-user"></i>
+                                        </span>
                                     </div>
-                                    <div class="form-group col-md-6">
-                                        <div class="input-group has-validation">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">
-                                                    <i class="fa fa-signature"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control" id="input-nom" placeholder="Nom" aria-label="Nom" aria-describedby="basic-addon1">
-                                        </div>
-                                        <div class="text-danger" id="error-nom"></div>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">
-                                                    <i class="fa fa-signature"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control" id="input-prenom" placeholder="Prénom" aria-label="Prénom" aria-describedby="basic-addon1">
-                                        </div>
-                                        <div class="text-danger" id="error-prenom"></div>
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">
-                                                    <i class="fa fa-envelope"></i>
-                                                </span>
-                                            </div>
-                                            <input type="email" class="form-control" id="input-email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
-                                        </div>
-                                        <div class="text-danger" id="error-email"></div>
-                                    </div>
-                                    <div class="form-group col-md-12" style="margin-bottom: -15px;">
-                                        <fieldset class="form-group">
-                                            <label>Genre:</label>
-                                            <div class="form-check inline">
-                                                <div class="custom-control custom-radio custom-control-inline">
-                                                    <input checked type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
-                                                    <label class="custom-control-label" for="customRadioInline1">Masculin</label>
-                                                </div>
-                                            </div>
-                                            <div class="form-check inline">
-                                                <div class="custom-control custom-radio custom-control-inline">
-                                                    <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
-                                                    <label class="custom-control-label" for="customRadioInline2">Féminin</label>
-                                                </div>
-                                            </div>
-                                        </fieldset>
-                                    </div>
-                                    <div class="form-group col-md-6">
-                                        <label for="">Date de naissance:</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">
-                                                    <i class="fa fa-calendar-days"></i>
-                                                </span>
-                                            </div>
-                                            <input id="input-date-naissance" class="form-control" type="date" />
-                                        </div>
-                                        <div class="text-danger" id="error-date-naissance"></div>
-                                    </div>  
-                                    <div class="form-group col-md-6">
-                                        <label for="">Métier:</label>
-                                        <select id="select-metier" class="form-select" aria-label="Métier">
-                                            <option hidden value="Sélectionner">Sélectionner</option>
-                                            <option value="Étudiant">Étudiant(e)</option>
-                                            <option value="Enseignant">Enseignant(e)</option>
-                                            <option value="Ingénieur">Ingénieur(e)</option>
-                                            <option value="Autre">Autre</option>
-                                        </select>
-                                        <div class="text-danger" id="error-metier"></div>
-                                    </div>  
-                                    <div class="form-group col-md-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">
-                                                    <i class="fa fa-edit"></i>
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control" id="input-sujet" placeholder="Sujet" aria-label="Sujet" aria-describedby="basic-addon1">
-                                        </div>
-                                        <div class="text-danger" id="error-sujet"></div>
-                                    </div>
-                                    <div class="form-group col-md-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">
-                                                    <i class="fa fa-message"></i>
-                                                </span>
-                                            </div>
-                                            <textarea class="form-control" id="input-message"  placeholder="Message" rows="4"></textarea>
-                                        </div>
-                                        <div class="text-danger" id="error-message"></div>
-                                    </div>
+                                    <input type="text" class="form-control" id="input-nom" name="nom" placeholder="Nom" aria-label="Nom" aria-describedby="basic-addon1" value="<?php echo isset($_POST['nom']) ? $_POST['nom'] : ''; ?>">
                                 </div>
-                                <button type="button" class="btn" onclick="validerContact()">Envoyer</button>
-                            </form>
+                                <div class="text-danger" id="error-nom"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa-solid fa-user"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" id="input-prenom" name="prenom" placeholder="Prénom" aria-label="Prénom" aria-describedby="basic-addon1" value="<?php echo isset($_POST['prenom']) ? $_POST['prenom'] : ''; ?>">
+                                </div>
+                                <div class="text-danger" id="error-prenom"></div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                    <input type="email" class="form-control" id="input-email" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" value="<?php echo isset($_POST['email']) ? $_POST['email'] : ''; ?>">
+                                </div>
+                                <div class="text-danger" id="error-email"></div>
+                            </div>
+                            <div class="form-group col-md-12" style="margin-bottom: -15px;">
+                                <fieldset class="form-group">
+                                    <label>Genre:</label>
+                                    <div class="form-check inline">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input checked type="radio" id="customRadioInline1" name="genre" value="masculin" class="custom-control-input">
+                                            <label class="custom-control-label" for="customRadioInline1">Masculin</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check inline">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="customRadioInline2" name="genre" value="feminin" class="custom-control-input">
+                                            <label class="custom-control-label" for="customRadioInline2">Féminin</label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="">Date de naissance:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa fa-calendar-days"></i>
+                                        </span>
+                                    </div>
+                                    <input id="input-date_naissance" name="date_naissance" class="form-control" type="date" value="<?php echo isset($_POST['date_naissance']) ? $_POST['date_naissance'] : ''; ?>" />
+                                </div>
+                                <div class="text-danger" id="error-date_naissance"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="">Métier:</label>
+                                <select id="input-metier" class="form-select" name="metier" aria-label="Métier">
+                                    <option hidden value="Sélectionner">Sélectionner</option>
+                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'etudiant' ? 'selected' : ''; ?> value="etudiant">Étudiant(e)</option>
+                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'enseignant' ? 'selected' : ''; ?> value="enseignant">Enseignant(e)</option>
+                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'ingenieur' ? 'selected' : ''; ?> value="ingenieur">Ingénieur(e)</option>
+                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'autre' ? 'selected' : ''; ?> value="autre">Autre</option>
+                                </select>
+                                <div class="text-danger" id="error-metier"></div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa fa-edit"></i>
+                                        </span>
+                                    </div>
+                                    <input type="text" class="form-control" name="sujet" id="input-sujet" placeholder="Sujet" aria-label="Sujet" aria-describedby="basic-addon1" value="<?php echo isset($_POST['sujet']) ? $_POST['sujet'] : ''; ?>">
+                                </div>
+                                <div class="text-danger" id="error-sujet"></div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa fa-message"></i>
+                                        </span>
+                                    </div>
+                                    <textarea class="form-control" id="input-message" name="message" placeholder="Message" rows="4"><?php echo isset($_POST['message']) ? $_POST['message'] : ''; ?></textarea>
+                                </div>
+                                <div class="text-danger" id="error-message"></div>
+                            </div>
                         </div>
-                    </div>
+                        <button type="submit" class="btn">Envoyer</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <footer>
-        <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5">
-                <div class="col text-center pb-4 mt-5">
-                    <img class="mb-2" src="img/logo-light.png" height="32" alt="">
-                    <p class="text-muted text-left">Découvrez notre sélection de smartphones, ordinateurs portables, montres connectées et plus encore! Parcourez notre catalogue dès maintenant pour trouver les produits qui vous conviennent.</p>
-                </div>
-                <div class="col mt-5">
-                    <h5 class="text-white"><b>Plan de site</b></h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Accueil</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Contact</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Se connecter</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Mot de passe oublié</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
-                    </ul>
-                </div>
-                <div class="col mt-5">
-                    <h5 class="text-white"><b>Catégories</b></h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Toutes les produits</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Téléphones</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Ordinateurs</a></li>
-                        <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Montres connectées</a></li>
-                    </ul>
-                </div>
-                <div class="col mt-5">
-                    <h5 class="text-white"><b>Contactez-nous</b></h5>
-                    <p class="text-muted text-left">N'hésitez pas à nous contacter pour toute questions, suivez-nous sur nos réseaux sociaux:</p>
-                    <p>
-                        <a href="#" class="social-icon mr-2"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="social-icon mr-2"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-icon mr-2"><i class="fab fa-x-twitter"></i></a>
-                    </p>
-                </div>
-            </div>
-            <div class="col text-center pb-4 mt-4">
-                <img class="mb-2" src="img/logo-light.png" height="32" alt="">
-                <p class="text-muted">Tous les droits sont réservés © eshop.fr | 2023-2024</p>
-            </div>
-        </div>
-    </footer>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/main.js"></script>
-    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v84a3a4012de94ce1a686ba8c167c359c1696973893317" integrity="sha512-euoFGowhlaLqXsPWQ48qSkBSCFs3DPRyiwVu3FjR96cMPx+Fr+gpWRhIafcHwqwCqWS42RZhIudOvEI+Ckf6MA==" data-cf-beacon='{"rayId":"86e9bc02babed38b","version":"2024.3.0","token":"cd0b4b3a733644fc843ef0b185f98241"}' crossorigin="anonymous"></script>
-</body>
-
-</html>
+    </div>
+    </div>
+    </div>
+<?php include 'php/footer.php'; ?>
+<script>
+// Call the displayErrors function after the page has loaded
+document.addEventListener('DOMContentLoaded', function() {
+    displayErrors();
+});
+</script>

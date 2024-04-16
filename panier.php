@@ -1,7 +1,7 @@
 <?php
 session_start();
-include 'header.php';
-include 'varSession.inc.php';
+include 'php/header.php';
+include 'php/varSession.inc.php';
 
 ?>
 
@@ -33,7 +33,7 @@ include 'varSession.inc.php';
                                         echo "<td class='align-middle text-center'>" . $product['Description'] . "</td>";
                                         echo "<td class='align-middle text-center'>" . $product['Prix'] . "</td>";
                                         echo "<td class='align-middle text-center table-stock'>" . $quantity . "</td>";
-                                        echo "<td class='align-middle text-center'><form method='post' action='remove_from_cart.php'><input type='hidden' name='productId' value='" . $product['id'] . "'><button type='submit' class='btn btn-trash'><i class='fa fa-trash'></i></button></form></td>";
+                                        echo "<td class='align-middle text-center'><form method='post' action='php/remove_from_cart.php'><input type='hidden' name='productId' value='" . $product['id'] . "'><button type='submit' class='btn btn-trash'><i class='fa fa-trash'></i></button></form></td>";
                                         echo "</tr>";
                                         break;
                                     }
@@ -64,7 +64,7 @@ include 'varSession.inc.php';
         </div>
         <div class="col-4">
             <h1 class="font-weight-bold mb-4">Somme</h1>
-            <table class="table">
+            <table class="table table-borderless">
                 <tbody>
                     <tr>
                         <td>Total des articles:</td>
@@ -127,4 +127,4 @@ include 'varSession.inc.php';
 </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include 'php/footer.php'; ?>

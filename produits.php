@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include 'header.php';
+include 'php/header.php';
 
 if(isset($_GET['cat'])) {
     $category = urldecode($_GET['cat']);
@@ -69,7 +69,7 @@ if(isset($_GET['cat'])) {
                         <td class="align-middle text-center"><?php echo $product['Prix']." €"; ?></td>
                         <td class="align-middle text-center table-stock"><?php echo $product['Stock']; ?></td>
                         <td class="align-middle text-center">
-                            <form method="post" action="add_to_cart.php">
+                            <form method="post" action="php/add_to_cart.php">
                                 <input type="hidden" name="productId" value="<?php echo $product['id']; ?>">
                                 <!-- <input type="hidden" name="quantity" value="0"> -->
                                 <div class="input-group-wrapper">
@@ -120,4 +120,4 @@ if(isset($_GET['cat'])) {
 </div>
 </div>
 
-<?php include 'footer.php'; ?>
+<?php include 'php/footer.php'; ?>

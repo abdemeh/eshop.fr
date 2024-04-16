@@ -175,6 +175,32 @@ $(document).ready(function () {
     }
 });
 
+//Edit profile image
+$(document).ready(function() {
+    $('#edit-image').click(function() {
+        $('#edit-image-input').trigger('click');
+    });
+
+    $('#edit-image-input').change(function() {
+        $('#edit-image-form').submit();
+    });
+});
+
+ //Recherche dans tableau
+ $(document).ready(function () {
+    $('#searchInput').on('input', function () {
+        var searchText = $(this).val().toLowerCase();
+        $('#productTable tbody tr').each(function () {
+            var rowText = $(this).text().toLowerCase();
+            if (rowText.includes(searchText)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+});
+
 //Tableau de produits pagination
  var currentPage = 1;
  var rowsPerPage = 4;
@@ -242,17 +268,3 @@ $(document).ready(function () {
  showRows(currentPage);
  setupPagination();
 
- //Recherche dans tableau
- $(document).ready(function () {
-    $('#searchInput').on('input', function () {
-        var searchText = $(this).val().toLowerCase();
-        $('#productTable tbody tr').each(function () {
-            var rowText = $(this).text().toLowerCase();
-            if (rowText.includes(searchText)) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        });
-    });
-});

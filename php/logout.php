@@ -17,6 +17,6 @@ if (isset($_SESSION['panier'])) {
     unset($_SESSION['panier']);
 }
 
-header("Location: login.php");
+header("Location: ../login.php");
 exit;
 ?>
