@@ -77,13 +77,15 @@ include 'varSession.inc.php';
                         <td>
                             <?php
                                 $total = 0;
-                                foreach ($_SESSION['panier'] as $productId => $quantity) {
-                                    foreach ($categories as $category) {
-                                        foreach ($category as $product) {
-                                            if ($product['id'] == $productId) {
-                                                $subtotal = $quantity;
-                                                $total += $subtotal;
-                                                break;
+                                if(isset($_SESSION['panier'])) {
+                                    foreach ($_SESSION['panier'] as $productId => $quantity) {
+                                        foreach ($categories as $category) {
+                                            foreach ($category as $product) {
+                                                if ($product['id'] == $productId) {
+                                                    $subtotal = $quantity;
+                                                    $total += $subtotal;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -101,13 +103,15 @@ include 'varSession.inc.php';
                         <td>
                             <?php
                                 $total = 0;
-                                foreach ($_SESSION['panier'] as $productId => $quantity) {
-                                    foreach ($categories as $category) {
-                                        foreach ($category as $product) {
-                                            if ($product['id'] == $productId) {
-                                                $subtotal = $product['Prix'] * $quantity;
-                                                $total += $subtotal;
-                                                break;
+                                if(isset($_SESSION['panier'])) {
+                                    foreach ($_SESSION['panier'] as $productId => $quantity) {
+                                        foreach ($categories as $category) {
+                                            foreach ($category as $product) {
+                                                if ($product['id'] == $productId) {
+                                                    $subtotal = $product['Prix'] * $quantity;
+                                                    $total += $subtotal;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
