@@ -26,7 +26,7 @@ include 'header.php';
                             </div>
                             <div class="text-danger" id="error-login-email"></div>
                         </div>
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-12">
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="basic-addon1">
@@ -37,7 +37,7 @@ include 'header.php';
                             </div>
                             <div class="text-danger" id="error-login-password"></div>
                         </div>
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-12">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <div>
                                     <input type="checkbox" checked class="form-check-input" id="Se_Souvenir">

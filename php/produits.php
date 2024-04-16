@@ -15,6 +15,23 @@ if(isset($_GET['cat'])) {
     header('Location: index.php');
     exit();
 }
+
+
+// // Check if the 'panier' session exists
+// if (isset($_SESSION['panier'])) {
+//     echo "<h2>Contenu du panier :</h2>";
+//     echo "<ul>";
+//     // Iterate over the contents of the 'panier' session
+//     foreach ($_SESSION['panier'] as $productId => $quantity) {
+//         // Output the product ID and quantity
+//         echo "<li>Produit ID: $productId - Quantité: $quantity</li>";
+//     }
+//     echo "</ul>";
+// } else {
+//     // If the 'panier' session does not exist or is empty
+//     echo "<p>Votre panier est vide.</p>";
+// }
+
 ?>
 
 <div class="container">
@@ -33,7 +50,7 @@ if(isset($_GET['cat'])) {
         <table class="table table-hover" id="productTable">
             <thead>
                 <tr>
-                    <th class="text-center" scope="col">Photo</th>
+                    <th class="text-center" scope="col"></th>
                     <th class="text-center" scope="col">Référence</th>
                     <th class="text-center" scope="col">Description</th>
                     <th class="text-center" scope="col">Prix</th>
@@ -49,25 +66,29 @@ if(isset($_GET['cat'])) {
                         </th>
                         <td class="align-middle text-center"><?php echo $product['Référence']; ?></td>
                         <td class="align-middle text-center"><?php echo $product['Description']; ?></td>
-                        <td class="align-middle text-center"><?php echo $product['Prix']; ?></td>
+                        <td class="align-middle text-center"><?php echo $product['Prix']." €"; ?></td>
                         <td class="align-middle text-center table-stock"><?php echo $product['Stock']; ?></td>
                         <td class="align-middle text-center">
-                            <div class="input-group-wrapper">
-                                <div class="input-group inline-group">
-                                    <div class="input-group-prepend">
-                                        <button disabled class="btn btn-minus">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
+                            <form method="post" action="add_to_cart.php">
+                                <input type="hidden" name="productId" value="<?php echo $product['id']; ?>">
+                                <!-- <input type="hidden" name="quantity" value="0"> -->
+                                <div class="input-group-wrapper">
+                                    <div class="input-group inline-group">
+                                        <div class="input-group-prepend">
+                                            <button disabled type="button" class="btn btn-minus">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                        <input class="form-control quantity text-center" min="0" name="quantity" value="0" type="number">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-plus">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <input class="form-control quantity text-center" min="0" name="quantity" value="0" type="number">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-plus">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
+                                    <button disabled class="btn btn-add-to-cart mt-2" type="submit">Ajouter au panier</button>
                                 </div>
-                                <button disabled class="btn btn-add-to-cart mt-2">Ajouter au panier</button>
-                            </div>
+                            </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -98,4 +119,5 @@ if(isset($_GET['cat'])) {
 </div>
 </div>
 </div>
+
 <?php include 'footer.php'; ?>

@@ -156,12 +156,15 @@ $(document).ready(function () {
         var currentValue = parseInt(input.val());
         var minusButton = input.closest('.input-group-wrapper').find('.btn-minus');
         var plusButton = input.closest('.input-group-wrapper').find('.btn-plus');
+        var ajouterPanier = input.closest('.input-group-wrapper').find('.btn-add-to-cart');
         var maxStock = parseInt(input.closest('tr').find('.table-stock').text());
 
         if (currentValue <= 0) {
-            minusButton.prop('disabled', true);
+            minusButton.prop('disabled', true); 
+            ajouterPanier.prop('disabled', true); 
         } else {
             minusButton.prop('disabled', false);
+            ajouterPanier.prop('disabled', false); 
         }
 
         if (currentValue >= maxStock) {
