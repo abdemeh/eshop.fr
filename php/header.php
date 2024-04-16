@@ -3,6 +3,42 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include 'varSession.inc.php';
+
+$current_page = basename($_SERVER['PHP_SELF']);
+if (!isset($_SESSION['user']) && $current_page !== 'login.php' && $current_page !== 'index.php') {
+    header("Location: login.php");
+    exit;
+}
+if (!isset($_SESSION['role']) && $current_page !== 'login.php' && $current_page !== 'index.php') {
+    header("Location: login.php");
+    exit;
+}
+
+// Récupérer le nom d'utilisateur à partir de la session
+$user_id = $_SESSION['user_id'];
+
+// Lire le contenu du fichier utilisateurs.txt
+$utilisateurs = file("utilisateurs.txt", FILE_IGNORE_NEW_LINES);
+
+// Parcourir chaque utilisateur pour trouver celui correspondant à l'email de session
+foreach ($utilisateurs as $utilisateur) {
+    // Extraire les données de l'utilisateur en utilisant explode()
+    list($id, $nom, $prenom, $email, $mdp, $genre, $date_naissance, $metier, $role) = explode(":", $utilisateur);
+    // Vérifier si l'email correspond à celui de la session
+    if ($_SESSION['user_id'] == $id) {
+        
+        // Pré-remplir les champs du formulaire avec les données de l'utilisateur
+        $nom = $nom;
+        $prenom = $prenom;
+        $email = $email;
+        $mdp = $mdp;
+        $genre = $genre;
+        $date_naissance = $date_naissance;
+        $metier = $metier;
+        // Sortir de la boucle car l'utilisateur est trouvé
+        break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,13 +110,37 @@ include 'varSession.inc.php';
                         </li>
                     </ul>
                 </div>
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav align-items-center">
+                    <div class="align-middle">
+                        <?php if (isset($_SESSION['user'])) {echo "<p class='mb-0'> Bienvenue, <a href='profile.php'><b>" . $prenom . "</b></a>!</p>";}?>
+                    </div>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-icon" href="login.php"><i class="fa fa-user-circle"></i></a>
+                        <a class="nav-link nav-link-icon" href="profile.php"><i class="fa fa-user-circle"></i></a>
                     </li>
+                    <?php if (isset($_SESSION['user'])) {echo "<li class='nav-item'><a class='nav-link nav-link-icon' onclick='confirmLogout()' href='#'><i class='fa-solid fa-right-from-bracket'></i></a></li>";}?>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-icon" href="#"><i class="fa fa-cart-shopping"></i></a>
+                        <a class="nav-link nav-link-icon" href="panier.php"><i class="fa fa-cart-shopping"></i></a>
                     </li>
                 </ul>
             </div>
+
+            <!-- Modal -->
+            <div id="confirmLogoutModal" class="modal fade" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <a>Êtes-vous sûr de vouloir vous déconnecter?</a>    
+                        </div>
+                        <div class="modal-footer">
+                            <a href="logout.php" class="btn">Oui</a>
+                            <button type="button" class="btn" data-bs-dismiss="modal">Non</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </nav>
+<script>
+    function confirmLogout() {
+        $('#confirmLogoutModal').modal('show');
+    }
+</script>
