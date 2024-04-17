@@ -3,27 +3,35 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Chemin vers le fichier JSON
-$jsonFilePath = __DIR__ . '/../json/categories.json';
+include 'bddData.php';
 
-// Vérifier si le fichier JSON existe
-if (file_exists($jsonFilePath)) {
-    // Lire le contenu du fichier JSON
-    $jsonContents = file_get_contents($jsonFilePath);
+try {
+    // Create connection
+    $conn = new PDO("mysql:host=$host;dbname=$database", $username, $password);
+    // Set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Convertir le contenu JSON en tableau PHP
-    $categories = json_decode($jsonContents, true);
+    // Prepare SQL statement to fetch categories and associated products
+    $stmt = $conn->prepare("SELECT c.libelle AS categorie, p.* FROM categorie c JOIN produits p ON c.id = p.categorie_id");
+    // Execute the query
+    $stmt->execute();
+    // Fetch all rows
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Vérifier si le décodage JSON a réussi
-    if ($categories === null) {
-        echo "Erreur : Impossible de décoder le contenu JSON.";
-        exit;
+    // Group products by category
+    $categories = [];
+    foreach ($products as $product) {
+        $category = $product['categorie'];
+        unset($product['categorie']);
+        $categories[$category][] = $product;
     }
-} else {
-    echo "Erreur : Le fichier JSON n'existe pas.";
-    exit;
+
+    // Store categories and products in the session
+    $_SESSION['categories'] = $categories;
+
+} catch(PDOException $e) {
+    echo "Error: " . $e->getMessage();
 }
 
-// Stocker les catégories dans la session
-$_SESSION['categories'] = $categories;
+$conn = null;
 ?>

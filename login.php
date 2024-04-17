@@ -7,6 +7,14 @@ include 'php/header.php';
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-4">
+                <div id="error-message"><?php
+                                                if (isset($_GET['error'])){
+                                                    echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($_GET['error']) . '</div>';
+                                                }elseif (isset($_GET['success'])){
+                                                    echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_GET['success']) . '</div>';
+                                                }
+                                                ?>
+                </div>
                 <form method="post" action="php/authentification.php">
                     <div class="d-flex">
                         <img src="img/login.svg" class="img-fluid mb-4" alt="">
@@ -44,7 +52,7 @@ include 'php/header.php';
                                     <label class="form-check-label" for="Se_Souvenir">Se souvenir de moi</label>
                                 </div>
                                 <div class="ml-auto">
-                                    <a class="" href="">Créer un compte</a>
+                                    <a class="" href="sign_up.php">Créer un compte</a>
                                 </div>
                             </div>
                         </div>

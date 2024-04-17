@@ -3,34 +3,34 @@ session_start();
 
 include 'php/header.php';
 
+// Include database connection
+include 'php/bddData.php';
+
 if(isset($_GET['cat'])) {
     $category = urldecode($_GET['cat']);
-    if(isset($_SESSION['categories'][$category])) {
-        $products = $_SESSION['categories'][$category];
+    // Query the database for products in the selected category
+    $sql = "SELECT * FROM produits WHERE categorie_id IN (SELECT id FROM categorie WHERE libelle = ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $category);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        // Initialize an array to store products
+        $products = array();
+        // Fetch products from the result set
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
     } else {
+        // If no products found in the selected category, redirect to index.php
         header('Location: index.php');
         exit();
     }
 } else {
+    // If 'cat' parameter is not set, redirect to index.php
     header('Location: index.php');
     exit();
 }
-
-
-// // Check if the 'panier' session exists
-// if (isset($_SESSION['panier'])) {
-//     echo "<h2>Contenu du panier :</h2>";
-//     echo "<ul>";
-//     // Iterate over the contents of the 'panier' session
-//     foreach ($_SESSION['panier'] as $productId => $quantity) {
-//         // Output the product ID and quantity
-//         echo "<li>Produit ID: $productId - Quantité: $quantity</li>";
-//     }
-//     echo "</ul>";
-// } else {
-//     // If the 'panier' session does not exist or is empty
-//     echo "<p>Votre panier est vide.</p>";
-// }
 
 ?>
 
@@ -62,12 +62,12 @@ if(isset($_GET['cat'])) {
                 <?php foreach ($products as $product) : ?>
                     <tr>
                         <th class="align-middle text-center">
-                            <div class="h-10"><img class="zoomable-image" src="<?php echo $product['Photo']; ?>" height="100px" alt=""></div>
+                            <div class="h-10"><img class="zoomable-image" src="<?php echo $product['photo']; ?>" height="100px" alt=""></div>
                         </th>
-                        <td class="align-middle text-center"><?php echo $product['Référence']; ?></td>
-                        <td class="align-middle text-center"><?php echo $product['Description']; ?></td>
-                        <td class="align-middle text-center"><?php echo $product['Prix']." €"; ?></td>
-                        <td class="align-middle text-center table-stock"><?php echo $product['Stock']; ?></td>
+                        <td class="align-middle text-center"><?php echo $product['reference']; ?></td>
+                        <td class="align-middle text-center"><?php echo $product['description']; ?></td>
+                        <td class="align-middle text-center"><?php echo $product['prix']." €"; ?></td>
+                        <td class="align-middle text-center table-stock"><?php echo $product['stock']; ?></td>
                         <td class="align-middle text-center">
                             <form method="post" action="php/add_to_cart.php">
                                 <input type="hidden" name="productId" value="<?php echo $product['id']; ?>">

@@ -1,32 +1,60 @@
 <?php
+// Start session and perform header-related logic first
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include 'php/varSession.inc.php';
+include "php/varSession.inc.php";
 
-$current_page = basename($_SERVER['PHP_SELF']);
-if (!isset($_SESSION['user_id']) && $current_page !== 'login.php' && $current_page !== 'index.php') {
+$current_page = basename($_SERVER["PHP_SELF"]);
+if (
+    !isset($_SESSION["user_id"]) &&
+    $current_page !== "login.php" &&
+    $current_page !== "index.php" &&
+    $current_page !== "contact.php" &&
+    $current_page !== "sign_up.php"
+) {
     header("Location: login.php");
-    exit;
+    exit();
 }
 
-if (isset($_SESSION['user_id'])) {
-    $user_id = $_SESSION['user_id'];
-    $utilisateurs = file("txt/utilisateurs.txt", FILE_IGNORE_NEW_LINES);
-    foreach ($utilisateurs as $utilisateur) {
-        list($id, $nom, $prenom, $email, $mdp, $genre, $date_naissance, $metier, $role) = explode(":", $utilisateur);
-        if ($_SESSION['user_id'] == $id) {
-            $nom = $nom;
-            $prenom = $prenom;
-            $email = $email;
-            $mdp = $mdp;
-            $genre = $genre;
-            $date_naissance = $date_naissance;
-            $metier = $metier;
-            break;
-        }
+include "php/bddData.php";
+
+// Récupération des informations de l'utilisateur depuis la base de données
+if (isset($_SESSION["user_id"])) {
+    $user_id = $_SESSION["user_id"];
+    $sql = "SELECT * FROM users WHERE id = $user_id";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $nom = $row["nom"];
+        $prenom = $row["prenom"];
+        $email = $row["email"];
+        $mdp = $row["mdp"];
+        $genre = $row["genre"];
+        $date_naissance = $row["date_naissance"];
+        $metier = $row["metier_id"];
+        // Récupérez les autres champs de l'utilisateur de la même manière
+    } else {
+        echo "Aucun utilisateur trouvé";
     }
 }
+
+// Récupération des catégories de produits depuis la base de données
+$categories = [];
+$sql_categories = "SELECT * FROM categorie";
+$result_categories = $conn->query($sql_categories);
+
+if ($result_categories->num_rows > 0) {
+    while ($row_category = $result_categories->fetch_assoc()) {
+        $category = $row_category["libelle"];
+        // Vous pouvez ajouter d'autres informations de catégorie au besoin
+        $categories[$category] = []; // Initialisez un tableau vide pour les produits de cette catégorie
+    }
+}
+
+// Fermer la connexion à la base de données
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,35 +75,57 @@ if (isset($_SESSION['user_id'])) {
 <div class="wrapper d-flex align-items-stretch">
     <nav id="sidebar" class="active">
         <div class="p-4 pt-5">
-            <a href="<?php if(isset($_SESSION['user_id'])){echo "profile.php";}else{echo "#";}?>" class="img logo rounded-circle mb-2" style="background-image: url(<?php
-                                                                                                    if(isset($_SESSION['user_id'])){
-                                                                                                    $userImagePath = "img/users/{$_SESSION['user_id']}.jpg";
-                                                                                                    if (file_exists("img/users/{$_SESSION['user_id']}.jpg")) {
-                                                                                                        echo "img/users/{$_SESSION['user_id']}.jpg";
-                                                                                                    }else {
-                                                                                                        echo "img/profile.svg";
-                                                                                                    }}else {
-                                                                                                        echo "img/profile.svg";}
-                                                                                                    ?>);"></a>
+            <a href="<?php if (isset($_SESSION["user_id"])) {
+                echo "profile.php";
+            } else {
+                echo "#";
+            } ?>" class="img logo rounded-circle mb-2" style="background-image: url(<?php if (
+    isset($_SESSION["user_id"])
+) {
+    $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
+    if (file_exists("img/users/{$_SESSION["user_id"]}.jpg")) {
+        echo "img/users/{$_SESSION["user_id"]}.jpg";
+    } else {
+        echo "img/profile.svg";
+    }
+} else {
+    echo "img/profile.svg";
+} ?>);"></a>
             <div class="text-center">
-                <?php if (isset($_SESSION['user'])) {echo "<h5 class='mb-0'><a href='profile.php'><b>" . $prenom . " ". $nom ."</b></a></h5>";}?>
+                <?php if (isset($_SESSION["user_id"])) {
+                    echo "<h5 class='mb-0'><a href='profile.php'><b>" .
+                        $prenom .
+                        " " .
+                        $nom .
+                        "</b></a></h5>";
+                } ?>
             </div>
             <ul class="list-unstyled components mb-5 mt-5">
                 <li>
                     <a href="index.php">Accueil</a>
                 </li>
-                <?php
-                // Parcourez les catégories et générez le menu de manière dynamique
+                <?php // Parcourez les catégories et générez le menu de manière dynamique
                 foreach ($categories as $category => $products) {
                     $encodedCategory = urlencode($category);
-                    echo '<li>';
-                    echo '<a href="produits.php?cat=' . $encodedCategory . '">' . $category . '</a>';
-                    echo '</li>';
-                }
-                ?>
+                    echo "<li>";
+                    echo '<a href="produits.php?cat=' .
+                        $encodedCategory .
+                        '">' .
+                        $category .
+                        "</a>";
+                    echo "</li>";
+                } ?>
                 <li>
                     <a href="contact.php">Contact</a>
                 </li>
+                <li>
+                    <a href="panier.php">Mon Panier</a>
+                </li>
+                <?php if (isset($_SESSION["user_id"])) {
+                    echo "<li>";
+                    echo '<a onclick="confirmLogout()" href="#">Se déconnecter</a>';
+                    echo "</li>";
+                } ?>
             </ul>
         </div>
     </nav>
@@ -97,15 +147,17 @@ if (isset($_SESSION['user_id'])) {
                         <li class="nav-item">
                             <a class="nav-link" href="index.php">Accueil</a>
                         </li>
-                        <?php
-                        // Parcourez les catégories et générez le menu de manière dynamique
+                        <?php // Parcourez les catégories et générez le menu de manière dynamique
                         foreach ($categories as $category => $products) {
                             $encodedCategory = urlencode($category);
                             echo '<li class="nav-item">';
-                            echo '<a class="nav-link" href="produits.php?cat=' . $encodedCategory . '">' . $category . '</a>';
-                            echo '</li>';
-                        }
-                        ?>
+                            echo '<a class="nav-link" href="produits.php?cat=' .
+                                $encodedCategory .
+                                '">' .
+                                $category .
+                                "</a>";
+                            echo "</li>";
+                        } ?>
                         <li class="nav-item">
                             <a class="nav-link" href="contact.php">Contact</a>
                         </li>
@@ -113,26 +165,32 @@ if (isset($_SESSION['user_id'])) {
                 </div>
                 <ul class="nav navbar-nav align-items-center">
                     <div class="align-middle">
-                        <?php if (isset($_SESSION['user'])) {echo "<p class='mb-0'> Bienvenue, <a href='profile.php'><b>" . $prenom . "</b></a>!</p>";}?>
+                        <?php if (isset($_SESSION["user_id"])) {
+                            echo "<p class='mb-0'> Bienvenue, <a href='profile.php'><b>" .
+                                $prenom .
+                                "</b></a>!</p>";
+                        } ?>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-icon" href="profile.php"><?php
-                                                                            if (isset($_SESSION['user_id'])) {
-                                                                                $userImagePath = "img/users/{$_SESSION['user_id']}.jpg";
-                                                                                if (file_exists($userImagePath)) {
-                                                                                    echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
-                                                                                } else {
-                                                                                    echo "<i class='fa fa-user-circle'></i>";
-                                                                                }
-                                                                            } else {
-                                                                                echo "<i class='fa fa-user-circle'></i>";
-                                                                            }
-?></a>
+                        <a class="nav-link nav-link-icon" href="profile.php"><?php if (
+                            isset($_SESSION["user_id"])
+                        ) {
+                            $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
+                            if (file_exists($userImagePath)) {
+                                echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
+                            } else {
+                                echo "<i class='fa fa-user-circle'></i>";
+                            }
+                        } else {
+                            echo "<i class='fa fa-user-circle'></i>";
+                        } ?></a>
                     </li>
-                    <?php if (isset($_SESSION['user'])) {echo "<li class='nav-item'><a class='nav-link nav-link-icon' onclick='confirmLogout()' href='#'><i class='fa-solid fa-right-from-bracket'></i></a></li>";}?>
                     <li class="nav-item">
                         <a class="nav-link nav-link-icon" href="panier.php"><i class="fa fa-cart-shopping"></i></a>
                     </li>
+                    <?php if (isset($_SESSION["user_id"])) {
+                        echo "<li class='nav-item'><a class='nav-link nav-link-icon' onclick='confirmLogout()' href='#'><i class='fa-solid fa-right-from-bracket'></i></a></li>";
+                    } ?>
                 </ul>
             </div>
     

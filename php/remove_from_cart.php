@@ -1,14 +1,26 @@
 <?php
 session_start();
 
-if (isset($_POST['productId'])) {
-    $productId = $_POST['productId'];
-    if (isset($_SESSION['panier'][$productId])) {
-        unset($_SESSION['panier'][$productId]);
-    }
-}
+include 'bddData.php';
 
-// Redirect back to the cart page
-header('Location: ../panier.php');
-exit();
+if (isset($_POST['product_id'])) {
+    $product_id = $_POST['product_id'];
+    $user_id = $_SESSION['user_id']; // Assurez-vous de récupérer l'ID de l'utilisateur
+
+    // Utilisation des variables directement dans la requête
+    $query = "DELETE FROM user_cart WHERE product_id = $product_id AND user_id = $user_id";
+
+    if ($conn->query($query) === TRUE) {
+        header('Location: ../panier.php');
+        exit();
+    } else {
+        header('Location: ../panier.php');
+        exit();
+    }
+
+    $conn->close();
+} else {
+    header('Location: ../panier.php');
+    exit();
+}
 ?>

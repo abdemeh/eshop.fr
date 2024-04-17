@@ -1,9 +1,17 @@
 <?php
 session_start();
-include 'php/header.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-require 'vendor/autoload.php';
+
+
+include "php/mail_send.php";
+
+include "php/main.php";
+include "php/header.php";
+include 'php/bddData.php';
+require "vendor/autoload.php";
+
+$metiers = getMetiers($conn);
+
+$conn->close();
 ?>
     <div class="container">
         <h1 class="text-center font-weight-bold mb-4">Contactez-nous!</h1>
@@ -17,147 +25,168 @@ require 'vendor/autoload.php';
                     <form id="contact-form" method="post">
                         <div class="form-row">
                             <div class="col-md-12">
-                                <div id="contact-message"></div>
-                                <?php 
-                                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                            <div id="error-message"><?php if (
+                                isset($_GET["error"])
+                            ) {
+                                echo '<div class="alert alert-danger" role="alert">' .
+                                    htmlspecialchars($_GET["error"]) .
+                                    "</div>";
+                            } elseif (isset($_GET["success"])) {
+                                echo '<div class="alert alert-success" role="alert">' .
+                                    htmlspecialchars($_GET["success"]) .
+                                    "</div>";
+                            } ?>
+                            </div>
+                                <?php if (
+                                    $_SERVER["REQUEST_METHOD"] == "POST"
+                                ) {
                                     // Récupérer les données du formulaire
-                                    $nom = $_POST['nom'];
-                                    $prenom = $_POST['prenom'];
-                                    $email = $_POST['email'];
-                                    $genre = isset($_POST['genre']) ? $_POST['genre'] : '';
-                                    $date_naissance = $_POST['date_naissance'];
-                                    $metier = $_POST['metier'];
-                                    $sujet = $_POST['sujet'];
-                                    $message = $_POST['message'];
-                                
+                                    $nom = $_POST["nom"];
+                                    $prenom = $_POST["prenom"];
+                                    $email = $_POST["email"];
+                                    $genre = isset($_POST["genre"])
+                                        ? $_POST["genre"]
+                                        : "";
+                                    $date_naissance = $_POST["date_naissance"];
+                                    $metier = $_POST["metier"];
+                                    $sujet = $_POST["sujet"];
+                                    $message = $_POST["message"];
+
                                     $errors = [];
                                     if (empty($nom)) {
-                                        $errors['nom'] = "Veuillez entrer un nom!";
+                                        $errors["nom"] =
+                                            "Veuillez entrer un nom!";
                                     }
-                                
+
                                     if (empty($prenom)) {
-                                        $errors['prenom'] = "Veuillez entrer un prénom!";
+                                        $errors["prenom"] =
+                                            "Veuillez entrer un prénom!";
                                     }
-                                
+
                                     if (empty($email)) {
-                                        $errors['email'] = "Veuillez entrer un email!";
-                                    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                                        $errors['email'] = "Veuillez entrer un email valide!";
+                                        $errors["email"] =
+                                            "Veuillez entrer un email!";
+                                    } elseif (
+                                        !filter_var(
+                                            $email,
+                                            FILTER_VALIDATE_EMAIL
+                                        )
+                                    ) {
+                                        $errors["email"] =
+                                            "Veuillez entrer un email valide!";
                                     }
-                                
+
                                     if (empty($sujet)) {
-                                        $errors['sujet'] = "Veuillez entrer un sujet!";
+                                        $errors["sujet"] =
+                                            "Veuillez entrer un sujet!";
                                     }
-                                
+
                                     if (empty($message)) {
-                                        $errors['message'] = "Veuillez entrer un message!";
+                                        $errors["message"] =
+                                            "Veuillez entrer un message!";
                                     }
-                                
+
                                     if (empty($date_naissance)) {
-                                        $errors['date_naissance'] = "Veuillez entrer une date!";
+                                        $errors["date_naissance"] =
+                                            "Veuillez entrer une date!";
                                     }
-                                
+
                                     if (empty($genre)) {
-                                        $errors['genre'] = "Veuillez sélectionner un genre!";
+                                        $errors["genre"] =
+                                            "Veuillez sélectionner un genre!";
                                     }
-                                
+
                                     if ($metier == "Sélectionner") {
-                                        $errors['metier'] = "Veuillez choisir un métier!";
+                                        $errors["metier"] =
+                                            "Veuillez choisir un métier!";
                                     }
                                     if (!empty($errors)) {
-                                        echo '<script>';
-                                        echo 'function displayErrors() {';
+                                        echo "<script>";
+                                        echo "function displayErrors() {";
                                         foreach ($errors as $field => $error) {
-                                            echo '$("#error-'.$field.'").html("'.$error.'");';
-                                            echo '$("#input-'.$field.'").addClass("is-invalid");';
+                                            echo '$("#error-' .
+                                                $field .
+                                                '").html("' .
+                                                $error .
+                                                '");';
+                                            echo '$("#input-' .
+                                                $field .
+                                                '").addClass("is-invalid");';
                                         }
-                                        echo '}';
-                                        echo '</script>';
+                                        echo "}";
+                                        echo "</script>";
                                     } else {
-                                        // Si aucun erreur, procéder à l'envoi de l'email
-                                        // Créer une instance de PHPMailer et envoyer l'email
-                                    
-                                
-                                        if($metier =="etudiant"){
-                                            if($genre =="masculin"){
-                                                $metier="&Eacute;tudiant";
-                                            }elseif($genre =="feminin"){
-                                                $metier="&Eacute;tudiante";
+                                        if ($metier == "etudiant") {
+                                            if ($genre == "M") {
+                                                $metier = "&Eacute;tudiant";
+                                            } elseif ($genre == "F") {
+                                                $metier = "&Eacute;tudiante";
                                             }
-                                        }elseif($metier =="enseignant"){
-                                            if($genre =="masculin"){
-                                                $metier="Enseignant";
-                                            }elseif($genre =="feminin"){
-                                                $metier="Enseignante";
+                                        } elseif ($metier == "enseignant") {
+                                            if ($genre == "M") {
+                                                $metier = "Enseignant";
+                                            } elseif ($genre == "F") {
+                                                $metier = "Enseignante";
                                             }
-                                        }elseif($metier =="ingenieur"){
-                                            if($genre =="masculin"){
-                                                $metier="Ingenieur";
-                                            }elseif($genre =="feminin"){
-                                                $metier="Ingenieure";
+                                        } elseif ($metier == "ingenieur") {
+                                            if ($genre == "M") {
+                                                $metier = "Ingenieur";
+                                            } elseif ($genre == "F") {
+                                                $metier = "Ingenieure";
                                             }
-                                        }else{
-                                            $metier="Autre";
+                                        } else {
+                                            $metier = "Autre";
                                         }
-                                
-                                        if($genre =="masculin"){
-                                            $genre="Masculin";
-                                        }elseif($genre =="feminin"){
-                                            $genre="F&eacute;minin";
+
+                                        if ($genre == "M") {
+                                            $genre = "Masculin";
+                                        } elseif ($genre == "F") {
+                                            $genre = "F&eacute;minin";
                                         }
-                                
-                                        // Créer une instance de PHPMailer
-                                        $mail = new PHPMailer(true);
-                                
-                                        try {
-                                            // Configuration du serveur SMTP
-                                            $mail->isSMTP();
-                                            $mail->Host = 'smtp-mail.outlook.com';  // Nom du serveur SMTP
-                                            $mail->Port = 587;  // Port SMTP
-                                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Chiffrement SMTP
-                                            $mail->SMTPAuth = true;  // Authentification SMTP
-                                            $mail->Username = 'eshop.fr@outlook.com';  // Votre adresse e-mail Outlook
-                                            $mail->Password = '{WLCEtuM6]=U(6t';  // Votre mot de passe Outlook
-                                
-                                            // Destinataire et expéditeur
-                                            // $mail->setFrom($email, $nom . ' ' . $prenom);
-                                            $mail->addAddress('eshop.fr@outlook.com', 'eshop.fr');  // Adresse e-mail du destinataire
-                                            // $mail->addReplyTo($email, $nom . ' ' . $prenom);
-                                
-                                            // Contenu de l'e-mail
-                                            $mail->isHTML(true);
-                                            $mail->Subject = 'Nouveau message de contact de ' . $nom . ' ' . $prenom;
-                                            $mail->Body    = '
+
+                                        $email_body =
+                                            '
                                                 <h1>Nouveau message de contact</h1>
-                                                <p><strong>Nom:</strong> ' . $nom . '</p>
-                                                <p><strong>Pr&eacute;nom:</strong> ' . $prenom . '</p>
-                                                <p><strong>Email:</strong> ' . $email . '</p>
-                                                <p><strong>Genre:</strong> ' . $genre . '</p>
-                                                <p><strong>Date de naissance:</strong> ' . $date_naissance . '</p>
-                                                <p><strong>M&eacute;tier:</strong> ' . $metier . '</p>
-                                                <p><strong>Sujet:</strong> ' . $sujet . '</p>
-                                                <p><strong>Message:</strong> ' . $message . '</p>
+                                                <p><strong>Nom:</strong> ' .
+                                            $nom .
+                                            '</p>
+                                                <p><strong>Pr&eacute;nom:</strong> ' .
+                                            $prenom .
+                                            '</p>
+                                                <p><strong>Email:</strong> ' .
+                                            $email .
+                                            '</p>
+                                                <p><strong>Genre:</strong> ' .
+                                            $genre .
+                                            '</p>
+                                                <p><strong>Date de naissance:</strong> ' .
+                                            $date_naissance .
+                                            '</p>
+                                                <p><strong>M&eacute;tier:</strong> ' .
+                                            $metier .
+                                            '</p>
+                                                <p><strong>Sujet:</strong> ' .
+                                            $sujet .
+                                            '</p>
+                                                <p><strong>Message:</strong> ' .
+                                            $message .
+                                            '</p>
                                             ';
-                                
-                                            // Envoi de l'e-mail
-                                            $mail->send();
-                                            echo '<script>';
-                                            echo 'document.addEventListener("DOMContentLoaded", function() {';
-                                            echo 'var contactMessageDiv = document.querySelector("#contact-message");';
-                                            echo 'contactMessageDiv.innerHTML = \'<div class="alert alert-success" role="alert">Message envoyé avec succès.</div>\';';
-                                            echo '});';
-                                            echo '</script>';
-                                        } catch (Exception $e) {
-                                            echo '<script>';
-                                            echo 'document.addEventListener("DOMContentLoaded", function() {';
-                                            echo 'var contactMessageDiv = document.querySelector("#contact-message");';
-                                            echo 'contactMessageDiv.innerHTML = \'<div class="alert alert-danger" role="alert">Erreur lors de l&apos;envoi de l&apos;e-mail : '.$mail->ErrorInfo.'</div>\';';
-                                            echo '});';
-                                            echo '</script>';
+                                        $resultSendCustomEmail = array(false,"");
+                                        $resultSendCustomEmail = sendCustomEmail('elmahdaouia@gmail.com', 'Nouveau message de contact de ' . $nom . ' ' . $prenom, $email_body);
+                                        
+                                        if($resultSendCustomEmail[0]==true){
+                                            echo "<script>window.location.href='contact.php?success=Messsage envoyé avec succès';</script>";
+                                        }else{
+                                            echo "<script>window.location.href='contact.php?error=Erreur: ".$resultSendCustomEmail[0]."';</script>";
                                         }
+                                        // header('Location: contact.php'.$resultSendCustomEmail);
+                                        // header(
+                                        //     "Location: contact.php?success=Email envoyé avec succès"
+                                        // );
+                                        // echo "<script>window.location.href='contact.php".$resultSendCustomEmail."';</script>";
                                     }
-                                }
-                                ?> 
+                                } ?> 
                             </div>
                             <div class="form-group col-md-6">
                                 <div class="input-group has-validation">
@@ -166,7 +195,11 @@ require 'vendor/autoload.php';
                                             <i class="fa-solid fa-user"></i>
                                         </span>
                                     </div>
-                                    <input type="text" class="form-control" id="input-nom" name="nom" placeholder="Nom" aria-label="Nom" aria-describedby="basic-addon1" value="<?php echo isset($_POST['nom']) ? $_POST['nom'] : ''; ?>">
+                                    <input type="text" class="form-control" id="input-nom" name="nom" placeholder="Nom" aria-label="Nom" aria-describedby="basic-addon1" value="<?php echo isset(
+                                        $_POST["nom"]
+                                    )
+                                        ? $_POST["nom"]
+                                        : ""; ?>">
                                 </div>
                                 <div class="text-danger" id="error-nom"></div>
                             </div>
@@ -177,7 +210,11 @@ require 'vendor/autoload.php';
                                             <i class="fa-solid fa-user"></i>
                                         </span>
                                     </div>
-                                    <input type="text" class="form-control" id="input-prenom" name="prenom" placeholder="Prénom" aria-label="Prénom" aria-describedby="basic-addon1" value="<?php echo isset($_POST['prenom']) ? $_POST['prenom'] : ''; ?>">
+                                    <input type="text" class="form-control" id="input-prenom" name="prenom" placeholder="Prénom" aria-label="Prénom" aria-describedby="basic-addon1" value="<?php echo isset(
+                                        $_POST["prenom"]
+                                    )
+                                        ? $_POST["prenom"]
+                                        : ""; ?>">
                                 </div>
                                 <div class="text-danger" id="error-prenom"></div>
                             </div>
@@ -188,7 +225,11 @@ require 'vendor/autoload.php';
                                             <i class="fa fa-envelope"></i>
                                         </span>
                                     </div>
-                                    <input type="email" class="form-control" id="input-email" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" value="<?php echo isset($_POST['email']) ? $_POST['email'] : ''; ?>">
+                                    <input type="email" class="form-control" id="input-email" name="email" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1" value="<?php echo isset(
+                                        $_POST["email"]
+                                    )
+                                        ? $_POST["email"]
+                                        : ""; ?>">
                                 </div>
                                 <div class="text-danger" id="error-email"></div>
                             </div>
@@ -197,13 +238,13 @@ require 'vendor/autoload.php';
                                     <label>Genre:</label>
                                     <div class="form-check inline">
                                         <div class="custom-control custom-radio custom-control-inline">
-                                            <input checked type="radio" id="customRadioInline1" name="genre" value="masculin" class="custom-control-input">
+                                            <input checked type="radio" id="customRadioInline1" name="genre" value="M" class="custom-control-input">
                                             <label class="custom-control-label" for="customRadioInline1">Masculin</label>
                                         </div>
                                     </div>
                                     <div class="form-check inline">
                                         <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" id="customRadioInline2" name="genre" value="feminin" class="custom-control-input">
+                                            <input type="radio" id="customRadioInline2" name="genre" value="F" class="custom-control-input">
                                             <label class="custom-control-label" for="customRadioInline2">Féminin</label>
                                         </div>
                                     </div>
@@ -217,7 +258,11 @@ require 'vendor/autoload.php';
                                             <i class="fa fa-calendar-days"></i>
                                         </span>
                                     </div>
-                                    <input id="input-date_naissance" name="date_naissance" class="form-control" type="date" value="<?php echo isset($_POST['date_naissance']) ? $_POST['date_naissance'] : ''; ?>" />
+                                    <input id="input-date_naissance" name="date_naissance" class="form-control" type="date" value="<?php echo isset(
+                                        $_POST["date_naissance"]
+                                    )
+                                        ? $_POST["date_naissance"]
+                                        : ""; ?>" />
                                 </div>
                                 <div class="text-danger" id="error-date_naissance"></div>
                             </div>
@@ -225,10 +270,12 @@ require 'vendor/autoload.php';
                                 <label for="">Métier:</label>
                                 <select id="input-metier" class="form-select" name="metier" aria-label="Métier">
                                     <option hidden value="Sélectionner">Sélectionner</option>
-                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'etudiant' ? 'selected' : ''; ?> value="etudiant">Étudiant(e)</option>
-                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'enseignant' ? 'selected' : ''; ?> value="enseignant">Enseignant(e)</option>
-                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'ingenieur' ? 'selected' : ''; ?> value="ingenieur">Ingénieur(e)</option>
-                                    <option <?php echo isset($_POST['metier']) && $_POST['metier'] == 'autre' ? 'selected' : ''; ?> value="autre">Autre</option>
+                                    <?php
+                                    foreach ($metiers as $metier) {
+                                        $selected = ($userData['metier_id'] == $metier['id']) ? "selected" : "";
+                                        echo '<option ' . $selected . ' value="' . $metier['id'] . '">' . $metier['libelle'] . '</option>';
+                                    }
+                                    ?>
                                 </select>
                                 <div class="text-danger" id="error-metier"></div>
                             </div>
@@ -239,7 +286,11 @@ require 'vendor/autoload.php';
                                             <i class="fa fa-edit"></i>
                                         </span>
                                     </div>
-                                    <input type="text" class="form-control" name="sujet" id="input-sujet" placeholder="Sujet" aria-label="Sujet" aria-describedby="basic-addon1" value="<?php echo isset($_POST['sujet']) ? $_POST['sujet'] : ''; ?>">
+                                    <input type="text" class="form-control" name="sujet" id="input-sujet" placeholder="Sujet" aria-label="Sujet" aria-describedby="basic-addon1" value="<?php echo isset(
+                                        $_POST["sujet"]
+                                    )
+                                        ? $_POST["sujet"]
+                                        : ""; ?>">
                                 </div>
                                 <div class="text-danger" id="error-sujet"></div>
                             </div>
@@ -250,7 +301,11 @@ require 'vendor/autoload.php';
                                             <i class="fa fa-message"></i>
                                         </span>
                                     </div>
-                                    <textarea class="form-control" id="input-message" name="message" placeholder="Message" rows="4"><?php echo isset($_POST['message']) ? $_POST['message'] : ''; ?></textarea>
+                                    <textarea class="form-control" id="input-message" name="message" placeholder="Message" rows="4"><?php echo isset(
+                                        $_POST["message"]
+                                    )
+                                        ? $_POST["message"]
+                                        : ""; ?></textarea>
                                 </div>
                                 <div class="text-danger" id="error-message"></div>
                             </div>
@@ -264,7 +319,7 @@ require 'vendor/autoload.php';
     </div>
     </div>
     </div>
-<?php include 'php/footer.php'; ?>
+<?php include "php/footer.php"; ?>
 <script>
 // Call the displayErrors function after the page has loaded
 document.addEventListener('DOMContentLoaded', function() {

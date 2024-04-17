@@ -115,6 +115,7 @@ function validerLogin() {
         $("#input-login-password").removeClass("is-invalid");
     }
 }
+
 //Cacher Stock
 $("#btn-cacher-stock").click(function() {
     if ($(this).text() === "Cacher stock") {

@@ -1,3 +1,0 @@
-1:Koné:Mohamed Lamine:mohamed@gmail.com:123':M:2003-01-01:1:user
-2:EL-MAHDAOUI:Abdellatif:abde@gmail.com:0000:M:2000-01-27:1:user
-3:Jean:Louise:louise@gmail.com:aaaa:F:2001-04-30:3:user
