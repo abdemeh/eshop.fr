@@ -15,20 +15,15 @@ if(isset($_GET['cat'])) {
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        // Initialize an array to store products
         $products = array();
-        // Fetch products from the result set
         while ($row = $result->fetch_assoc()) {
             $products[] = $row;
         }
     } else {
         $est_vide=true;
-        // If no products found in the selected category, redirect to index.php
-        // header('Location: index.php');
     }
 } else {
-    // If 'cat' parameter is not set, redirect to index.php
-    header('Location: index.php');
+    echo "<script>window.location.href='index.php';</script>";
     exit();
 }
 
