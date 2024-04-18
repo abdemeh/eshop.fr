@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 
 include "php/mail_send.php";
 

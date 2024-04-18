@@ -9,20 +9,20 @@
             <div class="col mt-5">
                 <h5 class="text-white"><b>Plan de site</b></h5>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Accueil</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Contact</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Se connecter</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Mot de passe oublié</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">About</a></li>
+                    <li class="nav-item mb-2"><a href="index.php" class="nav-link p-0 text-muted">Accueil</a></li>
+                    <li class="nav-item mb-2"><a href="contact.php" class="nav-link p-0 text-muted">Contact</a></li>
+                    <li class="nav-item mb-2"><a href="profile.php" class="nav-link p-0 text-muted">Mon Compte</a></li>
+                    <li class="nav-item mb-2"><a href="panier.php" class="nav-link p-0 text-muted">Mon Panier</a></li>
                 </ul>
             </div>
             <div class="col mt-5">
                 <h5 class="text-white"><b>Catégories</b></h5>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Toutes les produits</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Téléphones</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Ordinateurs</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-muted">Montres connectées</a></li>
+                <?php foreach ($categories as $category => $products) { 
+                    $encodedCategory = urlencode($category);
+                    echo "<li class='nav-item mb-2'><a href='produits.php?cat=".$encodedCategory."' class='nav-link p-0 text-muted'>".$category."</a></li>";
+                }    
+                    ?>
                 </ul>
             </div>
             <div class="col mt-5">

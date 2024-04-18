@@ -20,16 +20,14 @@ function verifierConnexion($login, $mot_de_passe) {
             }
             session_start();
             $_SESSION['user_id'] = $row['id'];
-            $conn->close();
             return true;
         } else {
-            $conn->close();
             return false;
         }
     } catch(PDOException $e) {
         header('Location: ../login.php?error='.$e->getMessage());
     }
-    $conn->close();
+    $conn = null;
     return false;
 }
 
@@ -38,11 +36,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mot_de_passe = $_POST["mot_de_passe"];
     if (verifierConnexion($login, $mot_de_passe)) {
         header("Location: ../index.php");
-        $conn->close();
         exit;
     } else {
         header('Location: ../login.php?error=Désolé, le login ou le mot de passe est incorrect.');
-        $conn->close();
         exit;
     }
 }

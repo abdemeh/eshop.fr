@@ -1,5 +1,4 @@
 <?php
-session_start();
 include 'php/header.php';
 include 'php/varSession.inc.php';
 include 'php/bddData.php';

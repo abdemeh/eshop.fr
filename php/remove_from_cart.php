@@ -1,19 +1,31 @@
 <?php
 session_start();
-
 include 'bddData.php';
 
 if (isset($_POST['product_id'])) {
     $product_id = $_POST['product_id'];
-    $user_id = $_SESSION['user_id']; // Assurez-vous de récupérer l'ID de l'utilisateur
+    $user_id = $_SESSION['user_id'];
 
-    // Utilisation des variables directement dans la requête
-    $query = "DELETE FROM user_cart WHERE product_id = $product_id AND user_id = $user_id";
+    $query = "SELECT sum(quantity) as quantity FROM user_cart WHERE product_id = $product_id AND user_id = $user_id";
+    $result = $conn->query($query);
 
-    if ($conn->query($query) === TRUE) {
-        header('Location: ../panier.php');
-        exit();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $quantity = $row['quantity'];
+
+        $deleteQuery = "DELETE FROM user_cart WHERE product_id = $product_id AND user_id = $user_id";
+        if ($conn->query($deleteQuery) === TRUE) {
+            $updateQuery = "UPDATE produits SET stock = stock + $quantity WHERE id = $product_id";
+            $conn->query($updateQuery);
+
+            header('Location: ../panier.php');
+            exit();
+        } else {
+            header('Location: ../panier.php');
+            exit();
+        }
     } else {
+        // Le produit n'est pas trouvé dans le panier de l'utilisateur
         header('Location: ../panier.php');
         exit();
     }

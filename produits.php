@@ -1,5 +1,4 @@
 <?php
-session_start();
 
 include 'php/header.php';
 
@@ -7,9 +6,10 @@ include 'php/header.php';
 include 'php/bddData.php';
 
 if(isset($_GET['cat'])) {
+    $est_vide=false;
     $category = urldecode($_GET['cat']);
     // Query the database for products in the selected category
-    $sql = "SELECT * FROM produits WHERE categorie_id IN (SELECT id FROM categorie WHERE libelle = ?)";
+    $sql = "SELECT * FROM produits WHERE categorie_id IN (SELECT id FROM categorie WHERE libelle = ?) AND stock > 0";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $category);
     $stmt->execute();
@@ -22,9 +22,9 @@ if(isset($_GET['cat'])) {
             $products[] = $row;
         }
     } else {
+        $est_vide=true;
         // If no products found in the selected category, redirect to index.php
-        header('Location: index.php');
-        exit();
+        // header('Location: index.php');
     }
 } else {
     // If 'cat' parameter is not set, redirect to index.php
@@ -59,7 +59,12 @@ if(isset($_GET['cat'])) {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($products as $product) : ?>
+                <?php
+                if($est_vide){
+                        echo "<tr>";
+                        echo "<td colspan='6' class='text-center'>Malheureusement, tous les produits de cette catégorie sont actuellement en rupture de stock.</td>";
+                        echo "</tr>";}
+                foreach ($products as $product) : ?>
                     <tr>
                         <th class="align-middle text-center">
                             <div class="h-10"><img class="zoomable-image" src="<?php echo $product['photo']; ?>" height="100px" alt=""></div>
