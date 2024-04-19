@@ -13,7 +13,7 @@ if(isset($_GET['token'])) {
     if($result->num_rows === 1) {
         $user = $result->fetch_assoc();
         $token = $conn->real_escape_string($token);
-        $update_stmt = $conn->prepare("UPDATE users SET verification_date = CURRENT_DATE() WHERE verification_token = '$token'");
+        $update_stmt = $conn->prepare("UPDATE users SET verification_date =  NOW() WHERE verification_token = '$token'");
         $update_stmt->execute();
         header('Location: ../login.php?success=Votre adresse e-mail a été vérifiée. Vous pouvez maintenant accéder à votre compte.');
     } else {

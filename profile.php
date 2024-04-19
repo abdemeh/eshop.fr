@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "UPDATE users SET nom='$nom', prenom='$prenom', email='$email', mdp='".md5($mdp)."', genre='$genre', date_naissance='$date_naissance', metier_id=$metier WHERE id={$_SESSION['user_id']}";
     if ($conn->query($sql) === TRUE) {
+        $conn->close();
         header('Location: profile.php?success=Données utilisateur mises à jour avec succès.');
     } else {
         header('Location: profile.php?error=Erreur lors de la mise à jour des données utilisateur.');
@@ -75,6 +76,8 @@ include 'php/header.php';
                         </div>
                         <form id="edit-image-form" action="php/upload_image.php" method="POST" enctype="multipart/form-data">
                             <input type="file" name="file" id="edit-image-input" accept=".jpg" hidden>
+                            <input type="hidden" name="destination_folder" value="../img/users/">
+                            <input type="hidden" name="original_page" value="../profile.php">
                         </form>
                     </div>
                 </div>
@@ -171,7 +174,7 @@ include 'php/header.php';
                                 <div class="text-danger" id="error-metier"></div>
                             </div>
                         </div>
-                        <button type="submit" class="btn">Enregistrer</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
                     </form>
                 </div>
             </div>

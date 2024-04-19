@@ -9,12 +9,22 @@ if (!$user_id) {
     header('Location: ../login.php'); // Redirect to login page if user is not logged in
     exit();
 }
-
-
 ?>
 
 <div class="container">
     <div class="row">
+        <div id="error-message"><?php if (
+                                    isset($_GET["error"])
+                                ) {
+                                    echo '<div class="alert alert-danger" role="alert">' .
+                                        htmlspecialchars($_GET["error"]) .
+                                        "</div>";
+                                } elseif (isset($_GET["success"])) {
+                                    echo '<div class="alert alert-success" role="alert">' .
+                                        htmlspecialchars($_GET["success"]) .
+                                        "</div>";
+                                } ?>
+        </div>
         <div class="col-8">
             <h1 class="font-weight-bold mb-4">Mon Panier</h1>
             <table class="table table-hover" id="productTable">
@@ -31,10 +41,10 @@ if (!$user_id) {
                 <tbody>
                     <?php
                     // Retrieve cart items from the database
-                    $sql = "SELECT produits.id AS product_id, produits.*, SUM(user_cart.quantity) AS total_quantity
+                    $sql = "SELECT produits.id AS product_id, produits.*, SUM(commande.quantity) AS total_quantity
                             FROM produits
-                            INNER JOIN user_cart ON produits.id = user_cart.product_id
-                            WHERE user_cart.user_id = $user_id
+                            INNER JOIN commande ON produits.id = commande.product_id
+                            WHERE commande.user_id = $user_id AND order_state='in_cart'
                             GROUP BY produits.id";
 
                     $result = $conn->query($sql);
@@ -45,13 +55,13 @@ if (!$user_id) {
                             echo "<tr>";
                             // Display product details
                             // Adjust the column names based on your database schema
-                            echo "<td class='align-middle text-center'><div class='h-10'><img class='zoomable-image' src='" . $row['photo'] . "' height='100px' alt=''></div></td>";
+                            echo "<td class='align-middle text-center'><div class='h-10'><img class='zoomable-image' src='img/produits/".$row['product_id'].".jpg' height='100px' alt=''></div></td>";
                             echo "<td class='align-middle text-center'>" . $row['reference'] . "</td>";
                             echo "<td class='align-middle text-center'>" . $row['description'] . "</td>";
                             echo "<td class='align-middle text-center'>" . $row['prix'] . "</td>";
                             echo "<td class='align-middle text-center table-stock'>" . $row['total_quantity'] . "</td>";
                             // Add a form to remove the item from the cart
-                            echo "<td class='align-middle text-center'><form method='post' action='php/remove_from_cart.php'><input type='hidden' name='product_id' value='" . $row['product_id'] . "'><button type='submit' class='btn btn-trash'><i class='fa fa-trash'></i></button></form></td>";
+                            echo "<td class='align-middle text-center'><form method='post' action='php/remove_from_cart.php'><input type='hidden' name='product_id' value='" . $row['product_id'] . "'><button type='submit' class='btn btn-primary btn-trash'><i class='fa fa-trash'></i></button></form></td>";
                             echo "</tr>";
                             $est_vide=false;
                         }
@@ -87,7 +97,7 @@ if (!$user_id) {
                         <td>
                             <?php
                             // Calculate the total quantity of items in the cart
-                            $sql_total_quantity = "SELECT SUM(quantity) AS total_quantity FROM user_cart WHERE user_id = $user_id";
+                            $sql_total_quantity = "SELECT SUM(quantity) AS total_quantity FROM commande WHERE user_id = $user_id";
                             $result_total_quantity = $conn->query($sql_total_quantity);
                             if ($result_total_quantity !== false) {
                                 $total_quantity_row = $result_total_quantity->fetch_assoc();
@@ -120,7 +130,7 @@ if (!$user_id) {
                         <td>
                             <?php
                                 // Calculate the total price of items in the cart
-                                $sql_total_price = "SELECT SUM(prix * quantity) AS total_price FROM user_cart uc INNER JOIN produits p ON uc.product_id = p.id WHERE uc.user_id = $user_id";
+                                $sql_total_price = "SELECT SUM(prix * quantity) AS total_price FROM commande uc INNER JOIN produits p ON uc.product_id = p.id WHERE uc.user_id = $user_id";
                                 $result_total_price = $conn->query($sql_total_price);
                                 if ($result_total_price !== false) {
                                     $total_price_row = $result_total_price->fetch_assoc();
@@ -130,28 +140,27 @@ if (!$user_id) {
                                 }
                                 if($est_vide){$total_price=0;}
                                 echo $total_price . " €";
+                                $conn->close();
                             ?>
                         </td>
                     </tr>
                     <tr>
                         <td><h4><b>Total:</b></h4></td>
                         <td>
-                            <h4><b>
+                            <h4><b id="montant-totale">
                             <?php
                                 if($est_vide){
                                     echo "0 €";
                                 }else{
                                     echo (number_format((float)(($total_price+$frais_livraison)+$total_price*$tva/100), 2, '.', '')) . " €";}
-                                
                             ?>
-                            
                             </b></h4>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div class="d-grid gap-2 form-group">
-                <button type="submit" class="btn">Procéder au paiement</button>
+                <button class="btn btn-primary" <?php if($est_vide){echo "disabled";}?> id="button-payer" type="button" data-bs-toggle="modal" data-bs-target="#modalPayment"><i class="fa-solid fa-credit-card"></i> Procéder au paiement</button>
             </div>
         </div>
     </div>
@@ -159,9 +168,93 @@ if (!$user_id) {
 </div>
 </div>
 
-<?php include 'php/footer.php'; ?>
+<!-- Modal Paiement -->
+<div id="modalPayment" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row">
+					<div class="">
+						<div class="card bg-transparent">
+							<div class="card-header bg-transparent border-0">
+								<div class="bg-white">
+									<ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
+										<li class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active"><i class="fa-solid fa-credit-card"></i> Carte de crédit</a> </li>
+										<li class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link "><i class="fa-brands fa-paypal"></i> Paypal</a> </li>
+									</ul>
+								</div>
+								<div class="tab-content">
+									<div id="credit-card" class="tab-pane fade show active pt-3">
+										<form role="form" onsubmit="event.preventDefault()">
+											<div class="form-group">
+												<input type="text" name="username" placeholder="Nom du titulaire de la carte" required class="form-control "> 
+											</div>
+											<div class="form-group">
+												<div class="input-group">
+													<input type="text" name="cardNumber" maxlength="19" placeholder="Numéro de carte valide" class="form-control input-card-number" required>
+													<div class="input-group-append"> <span class="input-group-text text-muted"> <i class="fa-brands fa-cc-visa ml-1"></i><i class="fa-brands fa-cc-mastercard ml-1"></i><i class="fa-brands fa-cc-stripe ml-1"></i></span> </div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-8">
+													<div class="form-group">
+														<label>
+															<span class="hidden-xs">
+																<h6>Date d'expiration</h6>
+															</span>
+														</label>
+														<div class="input-group"> <input maxlength="2" type="text" placeholder="MM" name="" class="form-control input-only-numbers" required> <input type="text" maxlength="2" placeholder="YY" name="" class="form-control input-only-numbers" required> </div>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group mb-4">
+														<label data-toggle="tooltip" title="Code CVV à trois chiffres au dos de votre carte">
+															<h6>CVV <i class="fa fa-question-circle d-inline"></i></h6>
+														</label>
+														<input type="text" required maxlength="3" class="form-control input-only-numbers"> 
+													</div>
+												</div>
+											</div>
+										</form>
+									</div>
+									<div id="paypal" class="tab-pane fade pt-3">
+										<h6 class="pb-2">Sélectionnez le type de compte Paypal</h6>
+										<div class="form-group "> 
+                                            <div class="form-check inline">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <input checked type="radio" id="customRadioInline1" name="National" value="National" class="custom-control-input">
+                                                    <label class="custom-control-label" for="customRadioInline1">National</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-check inline">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <input type="radio" id="customRadioInline2" name="National" value="International" class="custom-control-input">
+                                                    <label class="custom-control-label" for="customRadioInline2">International</label>
+                                                </div>
+                                            </div>
+                                            </div>
+										<p><button type="button" class="btn btn-primary "><i class="fab fa-paypal mr-2"></i> Se connecter à mon Paypal</button> </p>
+										<p class="text-muted"><i class="fa-solid fa-circle-info"></i> Vous serez redirigé vers une passerelle sécurisée pour le paiement, puis de retour sur notre site pour consulter les détails de votre commande.</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+            <form method="post" action="php/payement.php">
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary w-100">Payer <?php
+                                                                    if($est_vide){
+                                                                        echo "0 €";
+                                                                    }else{
+                                                                        echo (number_format((float)(($total_price+$frais_livraison)+$total_price*$tva/100), 2, '.', '')) . " €";}
+                                                                ?>
+                    </button>
+                </div>
+            </form>
+		</div>
+	</div>
+</div>
 
-<?php
-// Close the database connection
-$conn->close();
-?>
+<?php include 'php/footer.php'; ?>

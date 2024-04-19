@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     date_naissance DATE NOT NULL,
     metier_id INT,
     verification_token VARCHAR(255),
-    verification_date DATE,
+    verification_date DATETIME,
     role ENUM('admin', 'user') NOT NULL,
     FOREIGN KEY (metier_id) REFERENCES metier(id)
 );
@@ -44,11 +44,19 @@ CREATE TABLE IF NOT EXISTS produits (
     FOREIGN KEY (categorie_id) REFERENCES categorie(id)
 );
 
-CREATE TABLE IF NOT EXISTS user_cart (
+CREATE TABLE IF NOT EXISTS commande (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     product_id INT,
     quantity INT,
+    order_date DATETIME,
+    order_state VARCHAR(25),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+ALTER TABLE users CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE commande CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE metier CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE produits CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE categorie CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

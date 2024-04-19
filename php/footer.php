@@ -8,20 +8,38 @@
             </div>
             <div class="col mt-5">
                 <h5 class="text-white"><b>Plan de site</b></h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="index.php" class="nav-link p-0 text-muted">Accueil</a></li>
-                    <li class="nav-item mb-2"><a href="contact.php" class="nav-link p-0 text-muted">Contact</a></li>
-                    <li class="nav-item mb-2"><a href="profile.php" class="nav-link p-0 text-muted">Mon Compte</a></li>
-                    <li class="nav-item mb-2"><a href="panier.php" class="nav-link p-0 text-muted">Mon Panier</a></li>
-                </ul>
+                <?php 
+                    if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
+                        echo '<ul class="nav flex-column">';
+                        echo '<li class="nav-item mb-2"><a href="admin.php" class="nav-link p-0 text-muted">Accueil</a></li>';
+                        echo '<li class="nav-item mb-2"><a href="produits_edit.php" class="nav-link p-0 text-muted">Produits & Catégories</a></li>';
+                        echo '<li class="nav-item mb-2"><a href="settings.php" class="nav-link p-0 text-muted">Paramètres</a></li>';
+                        echo '<li class="nav-item mb-2"><a href="profile.php" class="nav-link p-0 text-muted">Mon Compte</a></li>';
+                        echo '</ul>';
+                    }else{
+                        echo '<ul class="nav flex-column">';
+                        echo '<li class="nav-item mb-2"><a href="index.php" class="nav-link p-0 text-muted">Accueil</a></li>';
+                        echo '<li class="nav-item mb-2"><a href="contact.php" class="nav-link p-0 text-muted">Contact</a></li>';
+                        echo '<li class="nav-item mb-2"><a href="profile.php" class="nav-link p-0 text-muted">Mon Compte</a></li>';
+                        echo '<li class="nav-item mb-2"><a href="panier.php" class="nav-link p-0 text-muted">Mon Panier</a></li>';
+                        echo '</ul>';
+                    }
+                ?>
             </div>
             <div class="col mt-5">
-                <h5 class="text-white"><b>Catégories</b></h5>
-                <ul class="nav flex-column">
-                <?php foreach ($categories as $category => $products) { 
-                    $encodedCategory = urlencode($category);
-                    echo "<li class='nav-item mb-2'><a href='produits.php?cat=".$encodedCategory."' class='nav-link p-0 text-muted'>".$category."</a></li>";
-                }    
+                <?php 
+                if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
+                    echo '<h5 class="text-white"><b>Catégories</b></h5>';
+                    echo '<ul class="nav flex-column">';  
+                    echo '<li class="nav-item mb-2"><a href="produits_edit.php" class="nav-link p-0 text-muted">Produits & Catégories</a></li>';
+                }else{
+                    echo '<h5 class="text-white"><b>Catégories</b></h5>';
+                    echo '<ul class="nav flex-column">';  
+                    foreach ($categories as $category => $products) { 
+                        $encodedCategory = urlencode($category);
+                        echo "<li class='nav-item mb-2'><a href='produits.php?cat=".$encodedCategory."' class='nav-link p-0 text-muted'>".$category."</a></li>";
+                    }
+                }   
                     ?>
                 </ul>
             </div>

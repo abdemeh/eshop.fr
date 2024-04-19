@@ -23,17 +23,17 @@ $conn->close();
                     <form id="contact-form" method="post">
                         <div class="form-row">
                             <div class="col-md-12">
-                            <div id="error-message"><?php if (
-                                isset($_GET["error"])
-                            ) {
-                                echo '<div class="alert alert-danger" role="alert">' .
-                                    htmlspecialchars($_GET["error"]) .
-                                    "</div>";
-                            } elseif (isset($_GET["success"])) {
-                                echo '<div class="alert alert-success" role="alert">' .
-                                    htmlspecialchars($_GET["success"]) .
-                                    "</div>";
-                            } ?>
+                                <div id="error-message"><?php if (
+                                    isset($_GET["error"])
+                                ) {
+                                    echo '<div class="alert alert-danger" role="alert">' .
+                                        htmlspecialchars($_GET["error"]) .
+                                        "</div>";
+                                } elseif (isset($_GET["success"])) {
+                                    echo '<div class="alert alert-success" role="alert">' .
+                                        htmlspecialchars($_GET["success"]) .
+                                        "</div>";
+                                } ?>
                             </div>
                                 <?php if (
                                     $_SERVER["REQUEST_METHOD"] == "POST"
@@ -308,7 +308,7 @@ $conn->close();
                                 <div class="text-danger" id="error-message"></div>
                             </div>
                         </div>
-                        <button type="submit" class="btn">Envoyer</button>
+                        <button type="submit" class="btn btn-primary">Envoyer</button>
                     </form>
                 </div>
             </div>

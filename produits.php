@@ -2,14 +2,12 @@
 
 include 'php/header.php';
 
-// Include database connection
 include 'php/bddData.php';
 
 if(isset($_GET['cat'])) {
     $est_vide=false;
     $category = urldecode($_GET['cat']);
-    // Query the database for products in the selected category
-    $sql = "SELECT * FROM produits WHERE categorie_id IN (SELECT id FROM categorie WHERE libelle = ?) AND stock > 0";
+    $sql = "SELECT * FROM produits WHERE categorie_id IN (SELECT id FROM categorie WHERE libelle = ?) AND stock > 0 ORDER BY description";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $category);
     $stmt->execute();
@@ -49,7 +47,7 @@ if(isset($_GET['cat'])) {
                     <th class="text-center" scope="col">Référence</th>
                     <th class="text-center" scope="col">Description</th>
                     <th class="text-center" scope="col">Prix</th>
-                    <th class="text-center table-stock" scope="col">Stock</th>
+                    <th class="text-center table-stock" scope="col" hidden="hidden">Stock</th>
                     <th class="text-center" scope="col">Commande</th>
                 </tr>
             </thead>
@@ -62,12 +60,12 @@ if(isset($_GET['cat'])) {
                 foreach ($products as $product) : ?>
                     <tr>
                         <th class="align-middle text-center">
-                            <div class="h-10"><img class="zoomable-image" src="<?php echo $product['photo']; ?>" height="100px" alt=""></div>
+                            <div class="h-10"><img class="zoomable-image" src="img/produits/<?php echo $product['id']; ?>.jpg" height="100px" onerror="this.onerror=null; this.src='img/product.jpg';" alt=""></div>
                         </th>
                         <td class="align-middle text-center"><?php echo $product['reference']; ?></td>
                         <td class="align-middle text-center"><?php echo $product['description']; ?></td>
                         <td class="align-middle text-center"><?php echo $product['prix']." €"; ?></td>
-                        <td class="align-middle text-center table-stock"><?php echo $product['stock']; ?></td>
+                        <td class="align-middle text-center table-stock" hidden="hidden"><?php echo $product['stock']; ?></td>
                         <td class="align-middle text-center">
                             <form method="post" action="php/add_to_cart.php">
                                 <input type="hidden" name="productId" value="<?php echo $product['id']; ?>">
@@ -75,18 +73,18 @@ if(isset($_GET['cat'])) {
                                 <div class="input-group-wrapper">
                                     <div class="input-group inline-group">
                                         <div class="input-group-prepend">
-                                            <button disabled type="button" class="btn btn-minus">
+                                            <button disabled type="button" class="btn btn-primary btn-minus">
                                                 <i class="fa fa-minus"></i>
                                             </button>
                                         </div>
                                         <input class="form-control quantity text-center" min="0" name="quantity" value="0" type="number">
                                         <div class="input-group-append">
-                                            <button type="button" class="btn btn-plus">
+                                            <button type="button" class="btn btn-primary btn-plus">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
-                                    <button disabled class="btn btn-add-to-cart mt-2" type="submit">Ajouter au panier</button>
+                                    <button disabled class="btn btn-primary btn-add-to-cart mt-2" type="submit">Ajouter au panier</button>
                                 </div>
                             </form>
                         </td>
@@ -111,7 +109,7 @@ if(isset($_GET['cat'])) {
     <div class="container">
         <div class="row">
             <div class="col-md-12 bg-light text-right">
-                <button id="btn-cacher-stock" class="btn mt-2">Cacher stock</button>
+                <button id="btn-cacher-stock" class="btn-primary btn mt-2">Afficher stock</button>
             </div>
         </div>
     </div>

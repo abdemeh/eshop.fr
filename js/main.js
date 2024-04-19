@@ -115,6 +115,64 @@ function validerLogin() {
         $("#input-login-password").removeClass("is-invalid");
     }
 }
+//Import csv trigger
+$(document).ready(function() {
+    // Trigger file input click event when button is clicked
+    $('#button-products-csv').click(function() {
+        $('#input-products-csv').trigger('click');
+    });
+
+    // Submit form when file is selected
+    $('#input-products-csv').change(function() {
+        // Check if file is selected
+        if ($(this).val() !== '') {
+            // Submit the form
+            $('#input-products-csv-form').submit();
+        }
+    });
+});
+
+//Edit product images
+$(document).ready(function() {
+    $('.edit-image').click(function() {
+        $(this).siblings('.edit-image-input').trigger('click');
+    });
+
+    $('.edit-image-input').change(function() {
+        $(this).closest('.edit-image-form').submit();
+    });
+});
+
+//Edit profile image
+$(document).ready(function() {
+    $('#edit-image').click(function() {
+        $('#edit-image-input').trigger('click');
+    });
+
+    $('#edit-image-input').change(function() {
+        $('#edit-image-form').submit();
+    });
+});
+
+//Show and hide ajouter produit
+
+$('#btn-ajouter-produit').click(function() {
+    $('#tr-ajouter-produit').removeAttr('hidden');
+});
+$('#btn-hide-produit').click(function() {
+    $('#tr-ajouter-produit').attr('hidden', true);
+    $('#form-ajouter-produit').reset();
+});
+
+//Show and hide ajouter categorie
+
+$('#btn-ajouter-categorie').click(function() {
+    $('#tr-ajouter-categorie').removeAttr('hidden');
+});
+$('#btn-hide-categorie').click(function() {
+    $('#tr-ajouter-categorie').attr('hidden', true);
+    $('#form-ajouter-categorie').reset();
+});
 
 //Cacher Stock
 $("#btn-cacher-stock").click(function() {
@@ -174,17 +232,6 @@ $(document).ready(function () {
             plusButton.prop('disabled', false);
         }
     }
-});
-
-//Edit profile image
-$(document).ready(function() {
-    $('#edit-image').click(function() {
-        $('#edit-image-input').trigger('click');
-    });
-
-    $('#edit-image-input').change(function() {
-        $('#edit-image-form').submit();
-    });
 });
 
  //Recherche dans tableau
@@ -269,3 +316,28 @@ $(document).ready(function() {
  showRows(currentPage);
  setupPagination();
 
+ $(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+
+$(document).ready(function() {
+    // Function to format credit card number with hyphens
+    $('.input-card-number').on('input', function() {
+        var cardNumber = $(this).val().replace(/\D/g, '');
+        var formattedNumber = '';
+        for (var i = 0; i < cardNumber.length; i++) {
+            if (i > 0 && i % 4 == 0) {
+                formattedNumber += '-';
+            }
+            formattedNumber += cardNumber[i];
+        }
+        $(this).val(formattedNumber);
+    });
+});
+
+$(document).ready(function() {
+    // Function to format credit card number with hyphens
+    $('.input-only-numbers').on('input', function() {
+        $(this).val($(this).val().replace(/\D/g, ''));
+    });
+});

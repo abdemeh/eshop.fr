@@ -7,13 +7,14 @@ include 'php/header.php';
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-4">
-                <div id="error-message"><?php
-                                                if (isset($_GET['error'])){
-                                                    echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($_GET['error']) . '</div>';
-                                                }elseif (isset($_GET['success'])){
-                                                    echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_GET['success']) . '</div>';
-                                                }
-                                                ?>
+                <div id="error-message">
+                    <?php
+                        if (isset($_GET['error'])){
+                            echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($_GET['error']) . '</div>';
+                        }elseif (isset($_GET['success'])){
+                            echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_GET['success']) . '</div>';
+                        }
+                    ?>
                 </div>
                 <form method="post" action="php/authentification.php">
                     <div class="d-flex">
@@ -48,7 +49,7 @@ include 'php/header.php';
                         <div class="form-group col-12">
                             <div class="form-check d-flex justify-content-between align-items-center">
                                 <div>
-                                    <input type="checkbox" checked class="form-check-input" id="Se_Souvenir">
+                                    <input type="checkbox" name="se_souvenir" checked class="form-check-input" id="Se_Souvenir">
                                     <label class="form-check-label" for="Se_Souvenir">Se souvenir de moi</label>
                                 </div>
                                 <div class="ml-auto">
@@ -57,7 +58,7 @@ include 'php/header.php';
                             </div>
                         </div>
                         <div class="d-grid gap-2 form-group col-md-12">
-                            <button type="submit" class="btn">Se connecter</button>
+                            <button type="submit" class="btn btn-primary">Se connecter</button>
                         </div>
                     </div>  
                 </form>

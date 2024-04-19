@@ -7,7 +7,6 @@ include "php/bddData.php";
 require "vendor/autoload.php";
 
 $metiers = getMetiers($conn);
-
 $conn->close();
 ?>
 
@@ -92,11 +91,15 @@ $conn->close();
                                     try {
                                         if ($conn->query($sql) === TRUE) {
                                             echo "<script>window.location.href='sign_up.php?success=Un email de vérification viens de vous être envoyé.';</script>";
+                                            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                                            $host = $_SERVER['HTTP_HOST'];
+                                            $path = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+                                            $link = $protocol . '://' . $host . $path ;
                                             $email_body = '
                                                             <center>
                                                                 <h1>Finaliser votre inscription</h1>
                                                                 <p>Pour v&eacute;rifier votre compte, veuillez cliquer sur le bouton ci-dessous :</p>
-                                                                <a href="http://localhost/php/eShop/php/verify_email.php?token='.$token.'" class="button">V&eacute;rifier le compte</a>
+                                                                <a href="'.$link.'/php/verify_email.php?token='.$token.'" class="button">V&eacute;rifier le compte</a>
                                                             </center>
                                                         ';
                                             $resultSendVerificationEmail = sendCustomEmail($email, 'V&eacute;rification de cr&eacute;ation de compte &agrave; eshop.fr', $email_body);
@@ -205,7 +208,7 @@ $conn->close();
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-block">Créer un compte</button>
+                            <button type="submit" class="btn btn-block btn-primary">Créer un compte</button>
                         </div>
                         <div class="col-12 text-center">
                             <a href="login.php">Se connecter</a>
