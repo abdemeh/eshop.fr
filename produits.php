@@ -1,8 +1,10 @@
 <?php
 
 include 'php/header.php';
-
+include 'php/main.php';
 include 'php/bddData.php';
+
+$settings = getSettings();
 
 if(isset($_GET['cat'])) {
     $est_vide=false;
@@ -67,7 +69,7 @@ if(isset($_GET['cat'])) {
                             </th>
                             <td class="align-middle text-center"><?php echo $product['reference']; ?></td>
                             <td class="align-middle text-center"><?php echo $product['description']; ?></td>
-                            <td class="align-middle text-center"><?php echo $product['prix']." €"; ?></td>
+                            <td class="align-middle text-center"><?php echo $product['prix']." ".$settings["devise"]; ?></td>
                             <td class="align-middle text-center table-stock" hidden="hidden"><?php echo $product['stock']; ?></td>
                             <td class="align-middle text-center">
                                 <form method="post" action="php/add_to_cart.php">

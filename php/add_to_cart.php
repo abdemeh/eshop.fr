@@ -9,7 +9,7 @@ if (isset($_POST['productId']) && isset($_POST['quantity'])) {
     $userId = $_SESSION['user_id'];
 
     // Insert the item into the user's cart
-    $query = "INSERT INTO commande (user_id, product_id, quantity, order_state) VALUES ($userId, $productId, $quantity, 'in_cart')";
+    $query = "INSERT INTO commande (user_id, product_id, quantity, order_state, order_date) VALUES ($userId, $productId, $quantity, 'in_cart', NOW())";
 
     if ($conn->query($query) === TRUE) {
         // Update the stock quantity in the products table

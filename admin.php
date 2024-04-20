@@ -4,6 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include 'php/header.php';
 include 'php/bddData.php';
+include 'php/main.php';
+
+$settings = getSettings();
 
 $nb_clients=0;
 $nb_commandes=0;
@@ -182,7 +185,7 @@ $conn->close();
                                 ?>
                             </div>
                             <h5 class="text-muted fw-normal mt-0"><i class="fa-solid fa-hand-holding-dollar"></i> Revenus</h5>
-                            <h3 class="font-weight-bold"><?php echo $revenues;?> €</h3>
+                            <h3 class="font-weight-bold"><?php echo $revenues.' '.$settings["devise"];?> </h3>
                         </div>
                     </div>
                 </div>
@@ -294,7 +297,7 @@ $conn->close();
                                     }
                                     ?>
                                 </td>
-                                <td class="align-middle text-center"><?php echo $payment['montant']."€"; ?></td>
+                                <td class="align-middle text-center"><?php echo $payment['montant'].$settings["devise"]; ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

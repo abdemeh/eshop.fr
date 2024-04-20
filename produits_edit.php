@@ -94,12 +94,13 @@ include 'php/bddData.php';
                                 </div>
                             </div>
                             <div id="error-message">
-                                <?php
-                                    if (isset($_GET['error'])){
-                                        echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($_GET['error']) . '</div>';
-                                    }elseif (isset($_GET['success'])){
-                                        echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_GET['success']) . '</div>';
-                                    }
+                                <?php if (isset($_GET["error"])){
+                                            echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
+                                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                                        }elseif(isset($_GET["success"])){
+                                            echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
+                                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                                        } 
                                 ?>
                             </div>
                             <table class="table table-hover table-sm" id="paymentTable">

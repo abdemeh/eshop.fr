@@ -2,6 +2,9 @@
 include 'php/header.php';
 include 'php/varSession.inc.php';
 include 'php/bddData.php';
+include 'php/main.php';
+
+$settings = getSettings();
 
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
@@ -13,17 +16,14 @@ if (!$user_id) {
 
 <div class="container">
     <div class="row">
-        <div id="error-message"><?php if (
-                                    isset($_GET["error"])
-                                ) {
-                                    echo '<div class="alert alert-danger" role="alert">' .
-                                        htmlspecialchars($_GET["error"]) .
-                                        "</div>";
-                                } elseif (isset($_GET["success"])) {
-                                    echo '<div class="alert alert-success" role="alert">' .
-                                        htmlspecialchars($_GET["success"]) .
-                                        "</div>";
-                                } ?>
+        <div id="error-message"><?php if (isset($_GET["error"])){
+                            echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                        }elseif(isset($_GET["success"])){
+                            echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                        } 
+                        ?>
         </div>
         <div class="col-8">
             <h1 class="font-weight-bold mb-4">Mon Panier</h1>
@@ -58,7 +58,7 @@ if (!$user_id) {
                             echo "<td class='align-middle text-center'><div class='h-10'><img class='zoomable-image' src='img/produits/".$row['product_id'].".jpg' height='100px' alt=''></div></td>";
                             echo "<td class='align-middle text-center'>" . $row['reference'] . "</td>";
                             echo "<td class='align-middle text-center'>" . $row['description'] . "</td>";
-                            echo "<td class='align-middle text-center'>" . $row['prix'] . "</td>";
+                            echo "<td class='align-middle text-center'>" . $row['prix'] . " ".$settings["devise"]."</td>";
                             echo "<td class='align-middle text-center table-stock'>" . $row['total_quantity'] . "</td>";
                             // Add a form to remove the item from the cart
                             echo "<td class='align-middle text-center'><form method='post' action='php/remove_from_cart.php'><input type='hidden' name='product_id' value='" . $row['product_id'] . "'><button type='submit' class='btn btn-primary btn-trash'><i class='fa fa-trash'></i></button></form></td>";
@@ -113,16 +113,14 @@ if (!$user_id) {
                     <tr>
                         <td>Frais de livraison:</td>
                         <td><?php 
-                            $frais_livraison=19.99;
-                            echo $frais_livraison . " €";
+                            echo $settings['livraison'] . " ".$settings['devise'];
                             ?>
                         </td>
                     </tr>
                     <tr>
                         <td>TVA:</td>
                         <td><?php 
-                            $tva=20;
-                            echo $tva . " %";
+                            echo $settings['tva'] . " %";
                             ?></td>
                     </tr>
                     <tr>
@@ -143,7 +141,7 @@ if (!$user_id) {
                                     $total_price = 0; // Set total price to 0 if no rows are found
                                 }
                                 if($est_vide){$total_price=0;}
-                                echo $total_price . " €";
+                                echo $total_price . " ".$settings["devise"];
                                 $conn->close();
                             ?>
                         </td>
@@ -155,10 +153,10 @@ if (!$user_id) {
                             <?php
                                 $montant_tt=0;
                                 if($est_vide){
-                                    echo "0 €";
+                                    echo "0 ".$settings["devise"];
                                 }else{
-                                    $montant_tt=(number_format((float)(($total_price+$frais_livraison)+$total_price*$tva/100), 2, '.', ''));
-                                    echo $montant_tt . " €";}
+                                    $montant_tt=(number_format((float)(($total_price+$settings['livraison'])+$total_price*$settings['tva']/100), 2, '.', ''));
+                                    echo $montant_tt . " ".$settings["devise"];}
                             ?>
                             </b></h4>
                         </td>
@@ -252,9 +250,9 @@ if (!$user_id) {
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary w-100">Payer <?php
                                                                     if($est_vide){
-                                                                        echo "0 €";
+                                                                        echo "0 ".$settings["devise"];
                                                                     }else{
-                                                                        echo (number_format((float)(($total_price+$frais_livraison)+$total_price*$tva/100), 2, '.', '')) . " €";}
+                                                                        echo (number_format((float)(($total_price+$settings['livraison'])+$total_price*$settings['tva']/100), 2, '.', '')) . " ".$settings["devise"];}
                                                                 ?>
                     </button>
                     <input type="text" name="montant_tt" value="<?php echo $montant_tt;?>" hidden></input>

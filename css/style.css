@@ -1692,8 +1692,11 @@ pre {
   -webkit-overflow-scrolling: touch; }
   .table-responsive > .table-bordered {
     border: 0; }
-
+.form-select {
+  border-radius: 25px 25px 25px 25px;
+}
 .form-control {
+  border-radius: 25px 25px 25px 25px;
   display: block;
   width: 100%;
   height: calc(1.5em + 0.75rem + 2px);
@@ -1705,7 +1708,6 @@ pre {
   background-color: var(--light-color);
   background-clip: padding-box;
   border: 1px solid #ced4da;
-  border-radius: 0.25rem;
   -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   -o-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -2941,7 +2943,8 @@ input[type="button"].btn-block {
   -webkit-box-align: stretch;
   -ms-flex-align: stretch;
   align-items: stretch;
-  width: 100%; }
+  width: 100%; 
+}
   .input-group > .form-control,
   .input-group > .form-control-plaintext,
   .input-group > .custom-select,
@@ -8448,7 +8451,7 @@ h1, label, legend{
   background: none;
   border-right: none;
   color: var(--dark-color);
-  
+  border-radius: 25px;
 }
 /* .input-group > input{
   border-left: none;

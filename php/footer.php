@@ -1,3 +1,26 @@
+<?php 
+// Récupération des catégories de produits depuis la base de données
+$conn = new mysqli($host, $username, $password, $database);
+$categories = [];
+$sql_categories = "SELECT * FROM categorie";
+$result_categories = $conn->query($sql_categories);
+
+if ($result_categories->num_rows > 0) {
+    while ($row_category = $result_categories->fetch_assoc()) {
+        $category_id = $row_category["id"];
+        $category_libelle = $row_category["libelle"];
+        $category_icon = $row_category["icon"];
+
+        // You can add more category information as needed
+        $categories[$category_id] = array(
+            "libelle" => $category_libelle,
+            "icon" => $category_icon,
+            // Add more fields if necessary
+        );
+    }
+}
+$conn->close();
+?>
 
 <footer class="border-top">
     <div class="container">

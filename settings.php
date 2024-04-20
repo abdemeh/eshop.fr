@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+$settings_file = 'settings.json';
 
 include 'php/header.php';
 ?>
