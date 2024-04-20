@@ -170,10 +170,10 @@ window.addEventListener('load', function () {
                                     // echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
                                     echo '<li class="nav-link"><a href="profile.php"><img class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
                                 } else {
-                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Profil</span></a></li>';
                                 }
                             } else {
-                                echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                                echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Profil</span></a></li>';
                             }
                         }
                         else{
