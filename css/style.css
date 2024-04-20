@@ -8452,6 +8452,7 @@ h1, label, legend{
   border-right: none;
   color: var(--dark-color);
   border-radius: 25px;
+  background-color: var(--light-color);
 }
 /* .input-group > input{
   border-left: none;

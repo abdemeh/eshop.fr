@@ -39,9 +39,9 @@
             'devise' => '€',
             'tva' => 20,
             'livraison' => 19.99,
-            'facebook_url' => '#',
-            'instagram_url' => '#',
-            'x_url' => '#',
+            'facebook_url' => '',
+            'instagram_url' => '',
+            'x_url' => '',
             'phone' => '',
             'admin_contact_email' => ''
         ];
