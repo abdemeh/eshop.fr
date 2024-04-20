@@ -13,11 +13,21 @@ $settings = getSettings();
         <div class="col-8 mb-2">
             <div class="card widget-flat p-1">
                 <div class="card-body">
-                    <form>
+                    <form method="post" action="php/save_settings.php">
                         <div class="row">
+                            <div id="error-message">
+                                <?php if (isset($_GET["error"])){
+                                    echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
+                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                                }elseif(isset($_GET["success"])){
+                                    echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
+                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                                } 
+                                ?>
+                            </div>
                             <div class="col-4">
                                 <h6 class="text-muted">Devise <i class="fa-solid fa-money-bill"></i></h6>
-                                <select id="input-metier" class="form-select" name="metier" aria-label="Métier">
+                                <select name="devise" id="input-metier" class="form-select" name="metier" aria-label="Métier">
                                     <option <?php if($settings['devise']=="€"){echo 'selected';}?> value="€">Euro (€)</option>
                                     <option <?php if($settings['devise']=="$"){echo 'selected';}?> value="$">Dollar ($)</option>
                                     <option <?php if($settings['devise']=="£"){echo 'selected';}?> value="£">Livre sterling (£)</option>

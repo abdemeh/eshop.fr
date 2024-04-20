@@ -1,4 +1,8 @@
 <?php 
+include_once("php/main.php");
+
+$settings = getSettings();
+
 // Récupération des catégories de produits depuis la base de données
 $conn = new mysqli($host, $username, $password, $database);
 $categories = [];
@@ -73,9 +77,9 @@ $conn->close();
                 <h5 class="text-dark"><b>Contactez-nous</b></h5>
                 <p class="text-muted text-left">N'hésitez pas à nous contacter pour toute questions, suivez-nous sur nos réseaux sociaux:</p>
                 <p>
-                    <a href="#" class="social-icon mr-2"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="social-icon mr-2"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-icon mr-2"><i class="fab fa-x-twitter"></i></a>
+                    <a href="<?php echo $settings['facebook_url']?>" class="social-icon mr-2"><i class="fab fa-facebook"></i></a>
+                    <a href="<?php echo $settings['instagram_url']?>" class="social-icon mr-2"><i class="fab fa-instagram"></i></a>
+                    <a href="<?php echo $settings['x_url']?>" class="social-icon mr-2"><i class="fab fa-x-twitter"></i></a>
                 </p>
             </div>
         </div>

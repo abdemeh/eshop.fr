@@ -271,6 +271,13 @@ function showRows(tableId, pageNumber, rowsPerPage) {
     }
 }
 
+//Formater input to numbers
+$(document).ready(function() {
+    $('.input-only-numbers').on('input', function() {
+        $(this).val($(this).val().replace(/\D/g, ''));
+    });
+});
+
 function setupPagination(tableId, paginationId, currentPage, rowsPerPage) {
     var table = document.getElementById(tableId);
     var totalRows = table.getElementsByTagName("tbody")[0].rows.length;
@@ -352,12 +359,5 @@ $(document).ready(function() {
             formattedNumber += cardNumber[i];
         }
         $(this).val(formattedNumber);
-    });
-});
-
-//Formater input to numbers
-$(document).ready(function() {
-    $('.input-only-numbers').on('input', function() {
-        $(this).val($(this).val().replace(/\D/g, ''));
     });
 });

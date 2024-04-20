@@ -7,6 +7,7 @@ include "php/header.php";
 include 'php/bddData.php';
 require "vendor/autoload.php";
 
+$settings = getSettings();
 $metiers = getMetiers($conn);
 
 $conn->close();
@@ -169,7 +170,7 @@ $conn->close();
                                                 '</p>
                                                 ';
                                             $resultSendCustomEmail = array(false,"");
-                                            $resultSendCustomEmail = sendCustomEmail('elmahdaouia@gmail.com', 'Nouveau message de contact de ' . $nom . ' ' . $prenom, $email_body);
+                                            $resultSendCustomEmail = sendCustomEmail($settings['admin_contact_email'], 'Nouveau message de contact de ' . $nom . ' ' . $prenom, $email_body);
                                             
                                             if($resultSendCustomEmail[0]==true){
                                                 echo "<script>window.location.href='contact.php?success=Messsage envoyé avec succès';</script>";
@@ -254,7 +255,8 @@ $conn->close();
                                                 <i class="fa fa-calendar-days"></i>
                                             </span>
                                         </div>
-                                        <input id="input-date_naissance" name="date_naissance" class="form-control" type="date" value="<?php echo isset(
+                                        <input id="input-date_naissance" name="date_naissance" class="form-control" min="<?php echo date('Y-m-d', strtotime('-90 years')); ?>" 
+                                        max="<?php echo date('Y-m-d', strtotime('-16 years')); ?>" type="date" value="<?php echo isset(
                                             $_POST["date_naissance"]
                                         )
                                             ? $_POST["date_naissance"]
