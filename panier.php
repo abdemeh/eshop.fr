@@ -27,7 +27,7 @@ if (!$user_id) {
         </div>
         <div class="col-8">
             <h1 class="font-weight-bold mb-4">Mon Panier</h1>
-            <table class="table table-hover" id="productTable">
+            <table class="table table-hover" id="paymentTable">
                 <thead>
                     <tr>
                         <th class="text-center" scope="col">Photo</th>
@@ -74,7 +74,7 @@ if (!$user_id) {
                     ?>
                 </tbody>
             </table>
-            <nav aria-label="Page navigation" id="pagination">
+            <nav aria-label="Page navigation" id="pagination_paymentTable">
                 <ul class="pagination justify-content-center">
                     <li class="page-item disabled">
                         <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
@@ -97,7 +97,7 @@ if (!$user_id) {
                         <td>
                             <?php
                             // Calculate the total quantity of items in the cart
-                            $sql_total_quantity = "SELECT SUM(quantity) AS total_quantity FROM commande WHERE user_id = $user_id";
+                            $sql_total_quantity = "SELECT SUM(quantity) AS total_quantity FROM commande WHERE user_id = $user_id AND order_state='in_cart'";
                             $result_total_quantity = $conn->query($sql_total_quantity);
                             if ($result_total_quantity !== false) {
                                 $total_quantity_row = $result_total_quantity->fetch_assoc();
@@ -130,7 +130,11 @@ if (!$user_id) {
                         <td>
                             <?php
                                 // Calculate the total price of items in the cart
-                                $sql_total_price = "SELECT SUM(prix * quantity) AS total_price FROM commande uc INNER JOIN produits p ON uc.product_id = p.id WHERE uc.user_id = $user_id";
+                                $sql_total_price = "SELECT SUM(p.prix * uc.quantity) AS total_price 
+                                FROM commande uc 
+                                INNER JOIN produits p ON uc.product_id = p.id 
+                                WHERE uc.user_id = $user_id 
+                                AND uc.order_state = 'in_cart'";
                                 $result_total_price = $conn->query($sql_total_price);
                                 if ($result_total_price !== false) {
                                     $total_price_row = $result_total_price->fetch_assoc();
@@ -149,10 +153,12 @@ if (!$user_id) {
                         <td>
                             <h4><b id="montant-totale">
                             <?php
+                                $montant_tt=0;
                                 if($est_vide){
                                     echo "0 €";
                                 }else{
-                                    echo (number_format((float)(($total_price+$frais_livraison)+$total_price*$tva/100), 2, '.', '')) . " €";}
+                                    $montant_tt=(number_format((float)(($total_price+$frais_livraison)+$total_price*$tva/100), 2, '.', ''));
+                                    echo $montant_tt . " €";}
                             ?>
                             </b></h4>
                         </td>
@@ -251,6 +257,7 @@ if (!$user_id) {
                                                                         echo (number_format((float)(($total_price+$frais_livraison)+$total_price*$tva/100), 2, '.', '')) . " €";}
                                                                 ?>
                     </button>
+                    <input type="text" name="montant_tt" value="<?php echo $montant_tt;?>" hidden></input>
                 </div>
             </form>
 		</div>

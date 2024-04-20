@@ -77,9 +77,16 @@ $result_categories = $conn->query($sql_categories);
 
 if ($result_categories->num_rows > 0) {
     while ($row_category = $result_categories->fetch_assoc()) {
-        $category = $row_category["libelle"];
-        // Vous pouvez ajouter d'autres informations de catégorie au besoin
-        $categories[$category] = []; // Initialisez un tableau vide pour les produits de cette catégorie
+        $category_id = $row_category["id"];
+        $category_libelle = $row_category["libelle"];
+        $category_icon = $row_category["icon"];
+
+        // You can add more category information as needed
+        $categories[$category_id] = array(
+            "libelle" => $category_libelle,
+            "icon" => $category_icon,
+            // Add more fields if necessary
+        );
     }
 }
 
@@ -87,7 +94,7 @@ if ($result_categories->num_rows > 0) {
 $conn->close();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <title>eShop.fr</title>
     <meta charset="utf-8">
@@ -102,150 +109,130 @@ $conn->close();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
+    
+<div id="preloader">
+  <div class="spinner-grow text-primary" role="status">
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', function () {
+  const preloader = document.getElementById('preloader');
+  setTimeout(function () {
+    preloader.style.opacity = '0';
+    setTimeout(function () {
+      preloader.style.display = 'none';
+    }, 500);
+  }, 500);
+});
+</script>
+
 <div class="wrapper d-flex align-items-stretch">
-    <nav id="sidebar" class="active">
-        <div class="p-4 pt-5">
-            <a href="<?php if (isset($_SESSION["user_id"])) {
-                echo "profile.php";
-            } else {
-                echo "#";
-            } ?>" class="img logo rounded-circle mb-2" style="background-image: url(<?php if (isset($_SESSION["user_id"])) {
-                                                                                    $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
-                                                                                    if (file_exists("img/users/{$_SESSION["user_id"]}.jpg")) {
-                                                                                        echo "img/users/{$_SESSION["user_id"]}.jpg";
-                                                                                    } else {
-                                                                                        echo "img/profile.svg";
-                                                                                    }
-                                                                                } else {
-                                                                                    echo "img/profile.svg";
-                                                                                } 
-            ?>);"></a>
-            <div class="text-center">
-                <?php if (isset($_SESSION["user_id"])) {
-                    echo "<h5 class='mb-0'><a href='profile.php'><b>".$prenom."</b></a></h5>";
-                    echo "<h5 class='mb-0'><a href='profile.php'><b>".$nom."</b></a></h5>";
-                } ?>
+<nav class="sidebar_new close border-right">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="img/logo.png" alt="">
+                </span>
+                <div class="text logo-text">
+                    <span class="name">eshop.fr</span>
+                    <span class="profession">Site ecommerce</span>
+                </div>
             </div>
-            <ul class="list-unstyled components mb-5 mt-5">
-                
-                <?php
-                if(!(isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                        echo"<li><a href='index.php'>Accueil</a></li>";
-                    }
-
-                if(!(isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                    foreach ($categories as $category => $products) {
-                        $encodedCategory = urlencode($category);
-                        echo "<li>";
-                        echo '<a href="produits.php?cat=' .
-                            $encodedCategory .
-                            '">' .
-                            $category .
-                            "</a>";
-                        echo "</li>";
-                    }
-                }
-                ?>
-                <?php 
-                if(!(isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                    echo "<li><a href='contact.php'>Contact</a></li>";
-                    echo "<li><a href='panier.php'>Mon Panier</a></li>";
-                }
-                ?>
-                
-                <?php 
-                if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                    echo '<li><a href="admin.php">Accueil</a></li>';
-                    echo '<li><a href="produits_edit.php">Produits & Catégories</a></li>';
-                    echo '<li><a href="settings.php">Paramètres</a></li>';
-
-                }
-                if (isset($_SESSION["user_id"])) {
-                    echo '<li><a href="profile.php">Mon profil</a></li>';
-                    echo '<li><a onclick="confirmLogout()" href="#">Se déconnecter</a></li>';
-                } 
-                ?>
-            </ul>
+            <i class="fa-solid fa-angle-right toggle"></i>
+        </header>
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links">
+                    <?php
+                        if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
+                            echo '<li class="nav-link"><a href="admin.php"><i class="fa-solid fa-chart-line icon"></i><span class="text nav-text">Tableau de bord</span></a></li>';
+                            echo '<li class="nav-link"><a href="produits_edit.php"><i class="fa-solid fa-tags icon"></i><span class="text nav-text">Produits/Catégories</span></a></li>';
+                        }
+                        else{
+                            echo '<li class="nav-link"><a href="index.php"><i class="fa-solid fa-house icon"></i><span class="text nav-text">Accueil</span></a></li>';
+                            foreach ($categories as $category_id => $category) {
+                                $encodedCategory = urlencode($category["libelle"]); // Encode the category name
+                                echo '<li class="nav-link"><a href="produits.php?cat='.$encodedCategory.'"><i class="'.$category["icon"].' icon"></i><span class="text nav-text">'.$category["libelle"].'</span></a></li>';
+                            }
+                            echo '<li class="nav-link"><a href="contact.php"><i class="fa-solid fa-envelope-open-text icon"></i><span class="text nav-text">Contact</span></a></li>';
+                        }
+                    ?> 
+                </ul>
+            </div>
+            <div class="bottom-content">
+            <?php
+                        if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
+                            echo '<li class="nav-link"><a href="settings.php"><i class="fa-solid fa-gear icon"></i><span class="text nav-text">Paramètres</span></a></li>';
+                            if (isset($_SESSION["user_id"])) {
+                                $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
+                                if (file_exists($userImagePath)) {
+                                    // echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
+                                    echo '<li class="nav-link"><a href="profile.php"><img class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
+                                } else {
+                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                                }
+                            } else {
+                                echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                            }
+                        }
+                        else{
+                            if (isset($_SESSION["user_id"])) {
+                                $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
+                                if (file_exists($userImagePath)) {
+                                    // echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
+                                    echo '<li class="nav-link"><a href="profile.php"><img class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
+                                } else {
+                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                                }
+                            } else {
+                                echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                            }
+                            echo '<li class="nav-link"><a href="panier.php"><i class="fa-solid fa-cart-shopping icon"></i><span class="text nav-text">Panier</span></a></li>';
+                        }
+                        if (isset($_SESSION["user_id"])){
+                            echo '<li onclick="confirmLogout()" class="nav-link"><a href="#"><i class="fa-solid fa-right-from-bracket icon"></i><span class="text nav-text">Se déconnecter</span></a></li>';
+                        }
+                    ?>              
+            </div>
         </div>
     </nav>
     <div id="content" class="p-4 p-md-5">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="navbar-brand d-flex justify-content-center">
+            <a href="index.php">
+                <img src="img/logo.png" class="ml-2" height="30" alt="">
+            </a>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom">
             <div class="container-fluid">
-                <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                    <i class="fa fa-bars-staggered"></i>
-                    <span class="sr-only">Toggle Menu</span>
-                </button>
                 <button class="btn btn-primary d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fa fa-bars-staggered"></i>
                 </button>
-                <a class="navbar-brand" href="index.php">
-                    <img src="img/logo.png" class="ml-2" height="30" alt="">
-                </a>
                 <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                     <ul class="nav navbar-nav">
+
                         <?php
                         if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                            echo "<a class='nav-link' href='admin.php'>Accueil</a>";
+                            echo "<a class='nav-link' href='admin.php'>Tableau de bord</a>";
                             echo "<a class='nav-link' href='produits_edit.php'>Produits & Catégories</a>";
                             echo "<a class='nav-link' href='profile.php'>Mon profil</a>";
                             // echo "<a class='nav-link' href='settings.php'>Paramètres</a>";
                         }
                         else{
                             echo "<a class='nav-link' href='index.php'>Accueil</a>";
-                            foreach ($categories as $category => $products) {
-                                $encodedCategory = urlencode($category);
+                            foreach ($categories as $category_id => $category) {
+                                $encodedCategory = urlencode($category["libelle"]); // Encode the category name
                                 echo '<li class="nav-item">';
-                                echo '<a class="nav-link" href="produits.php?cat=' .
-                                    $encodedCategory .
-                                    '">' .
-                                    $category .
-                                    "</a>";
-                                echo "</li>";
-                            }
+                                echo '<a class="nav-link" href="produits.php?cat=' . $encodedCategory . '">';
+                                echo '<span class="text nav-text">' . $category["libelle"] . '</span>';
+                                echo '</a>';
+                                echo '</li>';
+                            }                            
                             echo "<li class='nav-item'><a class='nav-link' href='contact.php'>Contact</a></li>";
                         }
                         ?> 
                     </ul>
                 </div>
-                <ul class="nav navbar-nav align-items-center">
-                    <div class="align-middle">
-                        <?php if (isset($_SESSION["user_id"])) {
-                            echo "<p class='mb-0'> Bienvenue, <a href='profile.php'><b>" .
-                                $prenom .
-                                "</b></a>!</p>";
-                        } ?>
-                    </div>
-                    <li class="nav-item">
-                        <a class="nav-link nav-link-icon" href="profile.php">
-                            <?php 
-                                if (isset($_SESSION["user_id"])) {
-                                    $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
-                                    if (file_exists($userImagePath)) {
-                                        echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
-                                    } else {
-                                        echo "<i class='fa fa-user-circle'></i>";
-                                    }
-                                } else {
-                                    echo "<i class='fa fa-user-circle'></i>";
-                                        }
-                            ?>
-                        </a>
-                    </li>
-                    <?php 
-                        if(!(isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                            echo "<li class='nav-item'><a class='nav-link nav-link-icon' href='panier.php'><i class='fa fa-cart-shopping'></i></a></li>";
-                        }
-                        if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                            // echo "<li class='nav-item'><a class='nav-link nav-link-icon' href='admin.php'><i class='fa-solid fa-chart-simple'></i></a></li>";
-                            // echo "<li class='nav-item'><a class='nav-link nav-link-icon' href='produits_edit.php'><i class='fa-solid fa-edit'></i></a></li>";
-                            echo "<li class='nav-item'><a class='nav-link nav-link-icon' href='settings.php'><i class='fa-solid fa-gear'></i></a></li>";
-
-                        }
-                        if (isset($_SESSION["user_id"])) {
-                            echo "<li class='nav-item'><a class='nav-link nav-link-icon' onclick='confirmLogout()' href='#'><i class='fa-solid fa-right-from-bracket'></i></a></li>";
-                        }
-                    ?>
-                </ul>
             </div>
     
             <!-- Modal Logout -->
@@ -253,7 +240,7 @@ $conn->close();
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <a>Êtes-vous sûr de vouloir vous déconnecter?</a>    
+                            <h6 class="text-dark">Êtes-vous sûr de vouloir vous déconnecter?</h6>    
                         </div>
                         <div class="modal-footer">
                             <a href="php/logout.php" class="btn btn-primary">Oui</a>

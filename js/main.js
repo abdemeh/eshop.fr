@@ -13,6 +13,7 @@
 })(jQuery);
 
 
+
 //Fonction zoom image
 $('.zoomable-image').click(function() {
     var imageURL = $(this).attr('src');
@@ -115,6 +116,13 @@ function validerLogin() {
         $("#input-login-password").removeClass("is-invalid");
     }
 }
+
+
+$(document).ready(function() {
+    $('.toggle').on("click", function() {
+        $('nav').toggleClass("close");
+    });
+});
 //Import csv trigger
 $(document).ready(function() {
     // Trigger file input click event when button is clicked
@@ -250,78 +258,90 @@ $(document).ready(function () {
 });
 
 //Tableau de produits pagination
- var currentPage = 1;
- var rowsPerPage = 4;
- function showRows(pageNumber) {
-     var rows = document.getElementById("productTable").getElementsByTagName("tbody")[0].rows;
-     var startIndex = (pageNumber - 1) * rowsPerPage;
-     var endIndex = Math.min(startIndex + rowsPerPage, rows.length);
-     for (var i = 0; i < rows.length; i++) {
-         rows[i].style.display = "none";
-     }
-     for (var j = startIndex; j < endIndex; j++) {
-         rows[j].style.display = "";
-     }
- }
- function setupPagination() {
-     var totalRows = document.getElementById("productTable").getElementsByTagName("tbody")[0].rows.length;
-     var totalPages = Math.ceil(totalRows / rowsPerPage);
-     var pagination = document.getElementById("pagination").getElementsByTagName("ul")[0];
-     pagination.innerHTML = "";
-     var prevButton = document.createElement("li");
-     prevButton.className = "page-item";
-     if (currentPage === 1) {
-         prevButton.classList.add("disabled");
-     }
-     prevButton.innerHTML = '<a class="page-link" href="#" tabindex="-1" aria-disabled="true" onclick="prevPage()">Précédent</a>';
-     pagination.appendChild(prevButton);
-     for (var i = 1; i <= totalPages; i++) {
-         var pageButton = document.createElement("li");
-         pageButton.className = "page-item";
-         if (i === currentPage) {
-             pageButton.classList.add("active");
-         }
-         pageButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(' + i + ')">' + i + '</a>';
-         pagination.appendChild(pageButton);
-     }
-     var nextButton = document.createElement("li");
-     nextButton.className = "page-item";
-     if (currentPage === totalPages) {
-         nextButton.classList.add("disabled");
-     }
-     nextButton.innerHTML = '<a class="page-link" href="#" onclick="nextPage()">Suivant</a>';
-     pagination.appendChild(nextButton);
- }
- function prevPage() {
-     if (currentPage > 1) {
-         currentPage--;
-         showRows(currentPage);
-         setupPagination();
-     }
- }
- function nextPage() {
-     var totalRows = document.getElementById("productTable").getElementsByTagName("tbody")[0].rows.length;
-     var totalPages = Math.ceil(totalRows / rowsPerPage);
-     if (currentPage < totalPages) {
-         currentPage++;
-         showRows(currentPage);
-         setupPagination();
-     }
- }
- function changePage(pageNumber) {
-     currentPage = pageNumber;
-     showRows(currentPage);
-     setupPagination();
- }
- showRows(currentPage);
- setupPagination();
+function showRows(tableId, pageNumber, rowsPerPage) {
+    var table = document.getElementById(tableId);
+    var rows = table.getElementsByTagName("tbody")[0].rows;
+    var startIndex = (pageNumber - 1) * rowsPerPage;
+    var endIndex = Math.min(startIndex + rowsPerPage, rows.length);
+    for (var i = 0; i < rows.length; i++) {
+        rows[i].style.display = "none";
+    }
+    for (var j = startIndex; j < endIndex; j++) {
+        rows[j].style.display = "";
+    }
+}
 
- $(function() {
-    $('[data-toggle="tooltip"]').tooltip()
-  })
+function setupPagination(tableId, paginationId, currentPage, rowsPerPage) {
+    var table = document.getElementById(tableId);
+    var totalRows = table.getElementsByTagName("tbody")[0].rows.length;
+    var totalPages = Math.ceil(totalRows / rowsPerPage);
+    var pagination = document.getElementById(paginationId).getElementsByTagName("ul")[0];
+    pagination.innerHTML = "";
+    var prevButton = document.createElement("li");
+    prevButton.className = "page-item";
+    if (currentPage === 1) {
+        prevButton.classList.add("disabled");
+    }
+    prevButton.innerHTML = '<a class="page-link" href="#" tabindex="-1" aria-disabled="true" onclick="prevPage(\'' + tableId + '\', \'' + paginationId + '\', ' + rowsPerPage + ')">Précédent</a>';
+    pagination.appendChild(prevButton);
+    for (var i = 1; i <= totalPages; i++) {
+        var pageButton = document.createElement("li");
+        pageButton.className = "page-item";
+        if (i === currentPage) {
+            pageButton.classList.add("active");
+        }
+        pageButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(\'' + tableId + '\', \'' + paginationId + '\', ' + i + ', ' + rowsPerPage + ')">' + i + '</a>';
+        pagination.appendChild(pageButton);
+    }
+    var nextButton = document.createElement("li");
+    nextButton.className = "page-item";
+    if (currentPage === totalPages) {
+        nextButton.classList.add("disabled");
+    }
+    nextButton.innerHTML = '<a class="page-link" href="#" onclick="nextPage(\'' + tableId + '\', \'' + paginationId + '\', ' + rowsPerPage + ')">Suivant</a>';
+    pagination.appendChild(nextButton);
+}
 
+function prevPage(tableId, paginationId, rowsPerPage) {
+    var currentPage = parseInt(document.querySelector('#' + paginationId + ' .page-item.active .page-link').textContent);
+    if (currentPage > 1) {
+        currentPage--;
+        showRows(tableId, currentPage, rowsPerPage);
+        setupPagination(tableId, paginationId, currentPage, rowsPerPage);
+    }
+}
+
+function nextPage(tableId, paginationId, rowsPerPage) {
+    var table = document.getElementById(tableId);
+    var currentPage = parseInt(document.querySelector('#' + paginationId + ' .page-item.active .page-link').textContent);
+    var totalRows = table.getElementsByTagName("tbody")[0].rows.length;
+    var totalPages = Math.ceil(totalRows / rowsPerPage);
+    if (currentPage < totalPages) {
+        currentPage++;
+        showRows(tableId, currentPage, rowsPerPage);
+        setupPagination(tableId, paginationId, currentPage, rowsPerPage);
+    }
+}
+
+function changePage(tableId, paginationId, pageNumber, rowsPerPage) {
+    showRows(tableId, pageNumber, rowsPerPage);
+    setupPagination(tableId, paginationId, pageNumber, rowsPerPage);
+}
+
+// Example usage:
+showRows("paymentTable", 1, 4); // Replace "paymentTable" with the ID of your table
+setupPagination("paymentTable", "pagination_paymentTable", 1, 4); // Replace "pagination" with the ID of your pagination control
+
+showRows("commandeTable", 1, 4); // Replace "paymentTable" with the ID of your table
+setupPagination("commandeTable", "pagination_commandeTable", 1, 4); // Replace "pagination" with the ID of your pagination control
+
+
+$(function() {
+$('[data-toggle="tooltip"]').tooltip()
+})
+
+//Formater Carte bancaire
 $(document).ready(function() {
-    // Function to format credit card number with hyphens
     $('.input-card-number').on('input', function() {
         var cardNumber = $(this).val().replace(/\D/g, '');
         var formattedNumber = '';
@@ -335,8 +355,8 @@ $(document).ready(function() {
     });
 });
 
+//Formater input to numbers
 $(document).ready(function() {
-    // Function to format credit card number with hyphens
     $('.input-only-numbers').on('input', function() {
         $(this).val($(this).val().replace(/\D/g, ''));
     });

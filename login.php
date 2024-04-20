@@ -7,61 +7,63 @@ include 'php/header.php';
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-4">
-                <div id="error-message">
-                    <?php
-                        if (isset($_GET['error'])){
-                            echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($_GET['error']) . '</div>';
-                        }elseif (isset($_GET['success'])){
-                            echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_GET['success']) . '</div>';
-                        }
-                    ?>
-                </div>
-                <form method="post" action="php/authentification.php">
-                    <div class="d-flex">
-                        <img src="img/login.svg" class="img-fluid mb-4" alt="">
+                <div class="card p-4 mt-2">
+                    <div id="error-message">
+                        <?php
+                            if (isset($_GET['error'])){
+                                echo '<div class="alert alert-danger" role="alert">' . htmlspecialchars($_GET['error']) . '</div>';
+                            }elseif (isset($_GET['success'])){
+                                echo '<div class="alert alert-success" role="alert">' . htmlspecialchars($_GET['success']) . '</div>';
+                            }
+                        ?>
                     </div>
-                    <div class="form-row">
-                        <div class="col-md-12">
-                            <div id="login-error"></div>
+                    <form method="post" action="php/authentification.php">
+                        <div class="d-flex">
+                            <img src="img/login.svg" class="img-fluid mb-4" alt="">
                         </div>
-                        <div class="form-group col-md-12">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">
-                                        <i class="fa fa-envelope"></i>
-                                    </span>
-                                </div>
-                                <input name="login" id="input-login-email" type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
+                        <div class="form-row">
+                            <div class="col-md-12">
+                                <div id="login-error"></div>
                             </div>
-                            <div class="text-danger" id="error-login-email"></div>
-                        </div>
-                        <div class="form-group col-12">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon1">
-                                        <i class="fa fa-lock"></i>
-                                    </span>
+                            <div class="form-group col-md-12">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                    <input name="login" id="input-login-email" type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
                                 </div>
-                                <input name="mot_de_passe" id="input-login-password" type="password" class="form-control" placeholder="Mot de passe" aria-label="Mot de passe" aria-describedby="basic-addon1">
+                                <div class="text-danger" id="error-login-email"></div>
                             </div>
-                            <div class="text-danger" id="error-login-password"></div>
-                        </div>
-                        <div class="form-group col-12">
-                            <div class="form-check d-flex justify-content-between align-items-center">
-                                <div>
-                                    <input type="checkbox" name="se_souvenir" checked class="form-check-input" id="Se_Souvenir">
-                                    <label class="form-check-label" for="Se_Souvenir">Se souvenir de moi</label>
+                            <div class="form-group col-12">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input name="mot_de_passe" id="input-login-password" type="password" class="form-control" placeholder="Mot de passe" aria-label="Mot de passe" aria-describedby="basic-addon1">
                                 </div>
-                                <div class="ml-auto">
-                                    <a class="" href="sign_up.php">Créer un compte</a>
+                                <div class="text-danger" id="error-login-password"></div>
+                            </div>
+                            <div class="form-group col-12">
+                                <div class="form-check d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <input type="checkbox" name="se_souvenir" checked class="form-check-input" id="Se_Souvenir">
+                                        <label class="form-check-label" for="Se_Souvenir">Se souvenir de moi</label>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <a class="" href="sign_up.php">Créer un compte</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="d-grid gap-2 form-group col-md-12">
-                            <button type="submit" class="btn btn-primary">Se connecter</button>
-                        </div>
-                    </div>  
-                </form>
+                            <div class="d-grid gap-2 form-group col-md-12">
+                                <button type="submit" class="btn btn-primary">Se connecter</button>
+                            </div>
+                        </div>  
+                    </form>
+                </div>
             </div>
         </div>
     </div>

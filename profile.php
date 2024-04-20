@@ -156,7 +156,10 @@ include 'php/header.php';
                                             <i class="fa fa-calendar-days"></i>
                                         </span>
                                     </div>
-                                    <input id="input-date_naissance" name="date_naissance" class="form-control" type="date" value="<?php echo $userData['date_naissance'] ?? ''; ?>" />
+                                    <input id="input-date_naissance" name="date_naissance" class="form-control" type="date" 
+                                        value="<?php echo $userData['date_naissance'] ?? ''; ?>" 
+                                        min="<?php echo date('Y-m-d', strtotime('-90 years')); ?>" 
+                                        max="<?php echo date('Y-m-d', strtotime('-16 years')); ?>" />                                
                                 </div>
                                 <div class="text-danger" id="error-date_naissance"></div>
                             </div>

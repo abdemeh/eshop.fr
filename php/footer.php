@@ -1,13 +1,13 @@
 
-<footer>
+<footer class="border-top">
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5">
             <div class="col text-center pb-4 mt-5">
-                <img class="mb-2" src="img/logo-light.png" height="32" alt="">
+                <img class="mb-2" src="img/logo.png" height="32" alt="">
                 <p class="text-muted text-left">Découvrez notre sélection de smartphones, ordinateurs portables, montres connectées et plus encore! Parcourez notre catalogue dès maintenant pour trouver les produits qui vous conviennent.</p>
             </div>
             <div class="col mt-5">
-                <h5 class="text-white"><b>Plan de site</b></h5>
+                <h5 class="text-dark"><b>Plan de site</b></h5>
                 <?php 
                     if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
                         echo '<ul class="nav flex-column">';
@@ -27,24 +27,27 @@
                 ?>
             </div>
             <div class="col mt-5">
+                <h5 class="text-dark"><b>Catégories</b></h5>
                 <?php 
                 if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
-                    echo '<h5 class="text-white"><b>Catégories</b></h5>';
                     echo '<ul class="nav flex-column">';  
                     echo '<li class="nav-item mb-2"><a href="produits_edit.php" class="nav-link p-0 text-muted">Produits & Catégories</a></li>';
                 }else{
-                    echo '<h5 class="text-white"><b>Catégories</b></h5>';
                     echo '<ul class="nav flex-column">';  
-                    foreach ($categories as $category => $products) { 
-                        $encodedCategory = urlencode($category);
-                        echo "<li class='nav-item mb-2'><a href='produits.php?cat=".$encodedCategory."' class='nav-link p-0 text-muted'>".$category."</a></li>";
+                    foreach ($categories as $category_id => $category) {
+                        $encodedCategory = urlencode($category["libelle"]);
+                        echo "<li class='nav-item mb-2'>";
+                        echo "<a href='produits.php?cat=".$encodedCategory."' class='nav-link p-0 text-muted'>";
+                        echo $category["libelle"]; // Output category name
+                        echo "</a>";
+                        echo "</li>";
                     }
                 }   
                     ?>
                 </ul>
             </div>
             <div class="col mt-5">
-                <h5 class="text-white"><b>Contactez-nous</b></h5>
+                <h5 class="text-dark"><b>Contactez-nous</b></h5>
                 <p class="text-muted text-left">N'hésitez pas à nous contacter pour toute questions, suivez-nous sur nos réseaux sociaux:</p>
                 <p>
                     <a href="#" class="social-icon mr-2"><i class="fab fa-facebook"></i></a>
@@ -54,7 +57,7 @@
             </div>
         </div>
         <div class="col text-center pb-4 mt-4">
-            <img class="mb-2" src="img/logo-light.png" height="32" alt="">
+            <img class="mb-2" src="img/logo.png" height="32" alt="">
             <p class="text-muted">Tous les droits sont réservés © eshop.fr | 2023-2024</p>
         </div>
     </div>

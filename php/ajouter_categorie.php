@@ -3,8 +3,9 @@ include 'bddData.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['categorie_id'])) {
     $categorie_libelle = $_POST["categorie_libelle"];
     $categorie_id = $_POST["categorie_id"];
+    $categorie_icon = $_POST["select_categorie_icon"];
 
-    $sql = "INSERT INTO categorie (id, libelle) VALUES ($categorie_id, '$categorie_libelle')";
+    $sql = "INSERT INTO categorie (id, libelle, icon) VALUES ($categorie_id, '$categorie_libelle', '$categorie_icon')";
 
     if ($conn->query($sql) === TRUE) {
         $conn->close();

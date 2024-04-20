@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS metier (
 -- Create the table for categorie
 CREATE TABLE IF NOT EXISTS categorie (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL
+    libelle VARCHAR(255) NOT NULL,
+    icon VARCHAR(255) DEFAULT 'fa-solid fa-tags';
 );
 
 -- Create the table for produits
@@ -53,6 +54,15 @@ CREATE TABLE IF NOT EXISTS commande (
     order_state VARCHAR(25),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+CREATE TABLE payment (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT ,
+    payment_date DATETIME,
+    montant DECIMAL(10, 2),
+    mode_paiement ENUM('card', 'paypal') NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 ALTER TABLE users CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
