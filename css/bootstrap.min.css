@@ -3357,7 +3357,7 @@ textarea.form-control.is-invalid {
 
 .form-select.is-invalid,
 .was-validated .form-select:invalid {
-	border-color: var(--bs-form-invalid-border-color)
+	border-color: var(--bs-form-invalid-border-color);
 }
 
 .form-select.is-invalid:not([multiple]):not([size]),

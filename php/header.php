@@ -29,7 +29,8 @@ if (
     $current_page !== "admin.php" &&
     $current_page !== "settings.php" &&
     $current_page !== "produits_edit.php" &&
-    $current_page !== "profile.php"
+    $current_page !== "commandes.php" &&
+    $current_page !== "profile.php" 
 ) {
     header("Location: admin.php");
     exit();
@@ -65,9 +66,6 @@ if (isset($_SESSION["user_id"])) {
         $genre = $row["genre"];
         $date_naissance = $row["date_naissance"];
         $metier = $row["metier_id"];
-        // Récupérez les autres champs de l'utilisateur de la même manière
-    } else {
-        echo "Aucun utilisateur trouvé";
     }
 }
 
@@ -88,6 +86,19 @@ if ($result_categories->num_rows > 0) {
             "icon" => $category_icon,
             // Add more fields if necessary
         );
+    }
+}
+
+$count_panier=0;
+// Récupération des produits de panier
+if (isset($_SESSION["user_id"])) {
+    $user_id = $_SESSION["user_id"];
+    $sql = "SELECT COUNT(*) AS count_panier FROM commande WHERE user_id = $user_id AND order_state='in_cart'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $count_panier = $row["count_panier"];
     }
 }
 
@@ -149,11 +160,12 @@ window.addEventListener('load', function () {
                         if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
                             echo '<li class="nav-link"><a href="admin.php"><i class="fa-solid fa-chart-line icon"></i><span class="text nav-text">Tableau de bord</span></a></li>';
                             echo '<li class="nav-link"><a href="produits_edit.php"><i class="fa-solid fa-tags icon"></i><span class="text nav-text">Produits/Catégories</span></a></li>';
+                            echo '<li class="nav-link"><a href="commandes.php"><i class="fa-solid fa-bag-shopping icon"></i><span class="text nav-text">Commandes</span></a></li>';
                         }
                         else{
                             echo '<li class="nav-link"><a href="index.php"><i class="fa-solid fa-house icon"></i><span class="text nav-text">Accueil</span></a></li>';
                             foreach ($categories as $category_id => $category) {
-                                $encodedCategory = urlencode($category["libelle"]); // Encode the category name
+                                $encodedCategory = urlencode($category["libelle"]);
                                 echo '<li class="nav-link"><a href="produits.php?cat='.$encodedCategory.'"><i class="'.$category["icon"].' icon"></i><span class="text nav-text">'.$category["libelle"].'</span></a></li>';
                             }
                             echo '<li class="nav-link"><a href="contact.php"><i class="fa-solid fa-envelope-open-text icon"></i><span class="text nav-text">Contact</span></a></li>';
@@ -168,7 +180,6 @@ window.addEventListener('load', function () {
                             if (isset($_SESSION["user_id"])) {
                                 $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
                                 if (file_exists($userImagePath)) {
-                                    // echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
                                     echo '<li class="nav-link"><a href="profile.php"><img class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
                                 } else {
                                     echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
@@ -181,7 +192,6 @@ window.addEventListener('load', function () {
                             if (isset($_SESSION["user_id"])) {
                                 $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
                                 if (file_exists($userImagePath)) {
-                                    // echo "<img class='logo rounded-circle' src='$userImagePath' height='30px' width='30px' alt=''>";
                                     echo '<li class="nav-link"><a href="profile.php"><img class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
                                 } else {
                                     echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
@@ -189,7 +199,7 @@ window.addEventListener('load', function () {
                             } else {
                                 echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
                             }
-                            echo '<li class="nav-link"><a href="panier.php"><i class="fa-solid fa-cart-shopping icon"></i><span class="text nav-text">Panier</span></a></li>';
+                            echo '<li class="nav-link"><a href="panier.php"><i class="fa-solid fa-cart-shopping icon" id="icon-panier">';if($count_panier>0){echo '<span class="badge badge-pill badge-primary">'.$count_panier.'</span>';}echo '</i><span class="text nav-text">Panier</span></a></li>';
                         }
                         if (isset($_SESSION["user_id"])){
                             echo '<li onclick="confirmLogout()" class="nav-link"><a href="#"><i class="fa-solid fa-right-from-bracket icon"></i><span class="text nav-text">Se déconnecter</span></a></li>';
@@ -216,8 +226,8 @@ window.addEventListener('load', function () {
                         if((isset($_SESSION["user_role"]) && $_SESSION['user_role'] == "admin")){
                             echo "<a class='nav-link' href='admin.php'>Tableau de bord</a>";
                             echo "<a class='nav-link' href='produits_edit.php'>Produits & Catégories</a>";
+                            echo "<a class='nav-link' href='commandes.php'>Commandes</a>";
                             echo "<a class='nav-link' href='profile.php'>Mon profil</a>";
-                            // echo "<a class='nav-link' href='settings.php'>Paramètres</a>";
                         }
                         else{
                             echo "<a class='nav-link' href='index.php'>Accueil</a>";

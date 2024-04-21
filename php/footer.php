@@ -1,5 +1,5 @@
 <?php 
-include_once("php/main.php");
+include_once ("php/main.php");
 
 $settings = getSettings();
 
@@ -40,6 +40,7 @@ $conn->close();
                         echo '<ul class="nav flex-column">';
                         echo '<li class="nav-item mb-2"><a href="admin.php" class="nav-link p-0 text-muted">Accueil</a></li>';
                         echo '<li class="nav-item mb-2"><a href="produits_edit.php" class="nav-link p-0 text-muted">Produits & Catégories</a></li>';
+                        echo '<li class="nav-item mb-2"><a href="commandes.php" class="nav-link p-0 text-muted">Commandes</a></li>';
                         echo '<li class="nav-item mb-2"><a href="settings.php" class="nav-link p-0 text-muted">Paramètres</a></li>';
                         echo '<li class="nav-item mb-2"><a href="profile.php" class="nav-link p-0 text-muted">Mon Compte</a></li>';
                         echo '</ul>';

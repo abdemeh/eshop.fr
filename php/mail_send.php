@@ -23,6 +23,7 @@ function sendCustomEmail($receiverEmail, $subject, $body) {
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $body;
+        $mail->CharSet = "UTF-8";
 
         $mail->send();
 

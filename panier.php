@@ -2,7 +2,7 @@
 include 'php/header.php';
 include 'php/varSession.inc.php';
 include 'php/bddData.php';
-include 'php/main.php';
+include_once 'php/main.php';
 
 $settings = getSettings();
 
@@ -27,7 +27,7 @@ if (!$user_id) {
         </div>
         <div class="col-8">
             <h1 class="font-weight-bold mb-4">Mon Panier</h1>
-            <table class="table table-hover" id="paymentTable">
+            <table class="table table-hover" id="productsTable">
                 <thead>
                     <tr>
                         <th class="text-center" scope="col">Photo</th>
@@ -74,7 +74,7 @@ if (!$user_id) {
                     ?>
                 </tbody>
             </table>
-            <nav aria-label="Page navigation" id="pagination_paymentTable">
+            <nav aria-label="Page navigation" id="pagination_productsTable">
                 <ul class="pagination justify-content-center">
                     <li class="page-item disabled">
                         <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
@@ -183,8 +183,8 @@ if (!$user_id) {
 							<div class="card-header bg-transparent border-0">
 								<div class="bg-white">
 									<ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
-										<li class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active"><i class="fa-solid fa-credit-card"></i> Carte de crédit</a> </li>
-										<li class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link "><i class="fa-brands fa-paypal"></i> Paypal</a> </li>
+										<li id="btn-card" class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active"><i class="fa-solid fa-credit-card"></i> Carte de crédit</a> </li>
+										<li id="btn-paypal" class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link "><i class="fa-brands fa-paypal"></i> Paypal</a> </li>
 									</ul>
 								</div>
 								<div class="tab-content">
@@ -256,6 +256,7 @@ if (!$user_id) {
                                                                 ?>
                     </button>
                     <input type="text" name="montant_tt" value="<?php echo $montant_tt;?>" hidden></input>
+                    <input type="text" id="mode_paiement" name="mode_paiement" value="card" hidden></input>
                 </div>
             </form>
 		</div>

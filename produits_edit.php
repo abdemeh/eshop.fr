@@ -103,7 +103,7 @@ include 'php/bddData.php';
                                         } 
                                 ?>
                             </div>
-                            <table class="table table-hover table-sm" id="paymentTable">
+                            <table class="table table-hover table-sm" id="productsTable">
                                 <thead>
                                     <tr>
                                         <th class="text-center" scope="col"></th>
@@ -197,7 +197,7 @@ include 'php/bddData.php';
                                 </tbody>
                             </table>
                     
-                    <nav aria-label="Page navigation" id="pagination_paymentTable">
+                    <nav aria-label="Page navigation" id="pagination_productsTable">
                         <ul class="pagination justify-content-center">
                             <li class="page-item disabled">
                                 <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>

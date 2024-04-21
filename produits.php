@@ -1,8 +1,8 @@
 <?php
 
 include 'php/header.php';
-include 'php/main.php';
 include 'php/bddData.php';
+include_once 'php/main.php';
 
 $settings = getSettings();
 
@@ -21,8 +21,7 @@ if(isset($_GET['cat'])) {
         }
     } else {
         $products = [];
-        $est_vide=true;
-        
+        $est_vide=true; 
     }
 } else {
     echo "<script>window.location.href='index.php';</script>";
@@ -45,7 +44,7 @@ if(isset($_GET['cat'])) {
             </div>
         </div>
         <div>
-            <table class="table table-hover table-sm" id="paymentTable">
+            <table class="table table-hover table-sm" id="productsTable">
                 <thead>
                     <tr>
                         <th class="text-center" scope="col"></th>
@@ -82,7 +81,7 @@ if(isset($_GET['cat'])) {
                                                     <i class="fa fa-minus"></i>
                                                 </button>
                                             </div>
-                                            <input class="form-control quantity text-center" min="0" name="quantity" value="0" type="number">
+                                            <input class="form-control quantity text-center" min="0" name="quantity" value="0" type="number" style="height: auto;">
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-primary btn-plus">
                                                     <i class="fa fa-plus"></i>
@@ -98,7 +97,7 @@ if(isset($_GET['cat'])) {
                 </tbody>
             </table>
         </div>
-        <nav aria-label="Page navigation" id="pagination_paymentTable">
+        <nav aria-label="Page navigation" id="pagination_productsTable">
             <ul class="pagination justify-content-center">
                 <li class="page-item disabled">
                     <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>

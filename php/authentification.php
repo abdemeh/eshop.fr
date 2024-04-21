@@ -37,8 +37,18 @@ function verifierConnexion($login, $mot_de_passe) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $login = $_POST["login"];
-    $mot_de_passe = $_POST["mot_de_passe"];
+    $login = isset($_POST["login"]) ? trim($_POST["login"]) : ""; // Trim the login input
+    $mot_de_passe = isset($_POST["mot_de_passe"]) ? trim($_POST["mot_de_passe"]) : ""; // Trim the password input
+    
+    // Check if login or password is empty
+    if (empty($login)) {
+        header("Location: ../login.php?error=Veuillez entrer un email.");
+        exit;
+    }elseif(empty($mot_de_passe)) {
+        header("Location: ../login.php?error=Veuillez entrer un mot de passe.");
+        exit;
+    }
+    
     if (verifierConnexion($login, $mot_de_passe)) {
         if ($_SESSION['user_role'] == "admin") {
             header("Location: ../admin.php");
@@ -52,4 +62,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 }
+
 ?>

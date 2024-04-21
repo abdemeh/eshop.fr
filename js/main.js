@@ -335,12 +335,11 @@ function changePage(tableId, paginationId, pageNumber, rowsPerPage) {
     setupPagination(tableId, paginationId, pageNumber, rowsPerPage);
 }
 
-// Example usage:
-showRows("paymentTable", 1, 4); // Replace "paymentTable" with the ID of your table
-setupPagination("paymentTable", "pagination_paymentTable", 1, 4); // Replace "pagination" with the ID of your pagination control
+changePage("productsTable", "pagination_productsTable", 1, 5);
+changePage("commandeTable", "pagination_commandeTable", 1, 5);
+// changePage("paymentTable", "pagination_paymentTable", 1, 5);
+// changePage("panierTable", "pagination_panierTable", 1, 5);
 
-showRows("commandeTable", 1, 4); // Replace "paymentTable" with the ID of your table
-setupPagination("commandeTable", "pagination_commandeTable", 1, 4); // Replace "pagination" with the ID of your pagination control
 
 
 $(function() {
@@ -359,5 +358,16 @@ $(document).ready(function() {
             formattedNumber += cardNumber[i];
         }
         $(this).val(formattedNumber);
+    });
+});
+
+
+$(document).ready(function(){
+    $('#btn-card').click(function(){
+        $('#mode_paiement').val('card');
+    });
+
+    $('#btn-paypal').click(function(){
+        $('#mode_paiement').val('paypal');
     });
 });

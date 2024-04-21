@@ -27,24 +27,16 @@ include 'php/header.php';
                                 <div id="login-error"></div>
                             </div>
                             <div class="form-group col-md-12">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">
-                                            <i class="fa fa-envelope"></i>
-                                        </span>
-                                    </div>
-                                    <input name="login" id="input-login-email" type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
+                                <div class="has-validation">
+                                <h6 class="text-muted">E-mail</h6>
+                                    <input name="login" id="input-login-email" name="login" class="form-control" type="email">
                                 </div>
                                 <div class="text-danger" id="error-login-email"></div>
                             </div>
-                            <div class="form-group col-12">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1">
-                                            <i class="fa fa-lock"></i>
-                                        </span>
-                                    </div>
-                                    <input name="mot_de_passe" id="input-login-password" type="password" class="form-control" placeholder="Mot de passe" aria-label="Mot de passe" aria-describedby="basic-addon1">
+                            <div class="form-group col-md-12">
+                                <div class="has-validation">
+                                    <h6 class="text-muted">Mot de passe</h6>
+                                    <input name="mot_de_passe" id="input-login-password" name="password" class="form-control" type="password">
                                 </div>
                                 <div class="text-danger" id="error-login-password"></div>
                             </div>

@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include 'php/header.php';
 include 'php/bddData.php';
-include 'php/main.php';
+include_once 'php/main.php';
 
 $settings = getSettings();
 
@@ -87,48 +87,60 @@ if ($result) {
     $percentage_revenue=number_format((float)$percentage_revenue, 2, '.', '');
 }
 
-    $commandes_est_vide = false;
-    $sql = "SELECT u.nom, u.prenom, u.email, p.reference, p.description, c.quantity, c.order_date, c.order_state 
-            FROM commande c 
-            JOIN users u ON c.user_id = u.id 
-            JOIN produits p ON c.product_id = p.id 
-            ORDER BY c.order_date DESC;";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $commandes = array();
-        while ($row = $result->fetch_assoc()) {
-            $commandes[] = $row;
-        }
-    } else {
-        $commandes = [];
-        $est_vide = true;
-    }
+$sql = "SELECT 
+    (COUNT(CASE WHEN genre = 'F' THEN 1 END) / COUNT(*)) * 100 AS percentage_female_users,
+    (COUNT(CASE WHEN genre = 'M' THEN 1 END) / COUNT(*)) * 100 AS percentage_male_users
+    FROM users
+    WHERE users.role = 'user'";
+$result = $conn->query($sql);
 
-    $payments_est_vide = false;
-    $sql = "SELECT u.nom, u.prenom, u.email, p.payment_date, p.montant, p.mode_paiement
-            FROM payment p 
-            JOIN users u ON p.user_id = u.id  
-            ORDER BY p.payment_date DESC;";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $payments = array();
-        while ($row = $result->fetch_assoc()) {
-            $payments[] = $row;
-        }
-    } else {
-        $payments = [];
-        $est_vide = true;
-    }
+if ($result) {
+    $row = $result->fetch_assoc();
+    $percentage_female_users = number_format((float)$row['percentage_female_users'], 2, '.', '');
+    $percentage_male_users = number_format((float)$row['percentage_male_users'], 2, '.', '');
+}
+
+$sql = "SELECT m.libelle AS metier, COUNT(u.id) AS total_users
+        FROM metier m
+        LEFT JOIN users u ON m.id = u.metier_id
+        WHERE u.role = 'user'
+        GROUP BY m.id
+        ORDER BY COUNT(u.id) DESC";
+$result = $conn->query($sql);
+
+$total_users = 0;
+$profession_percentages = [];
+
+while ($row = $result->fetch_assoc()) {
+    $total_users += $row['total_users'];
+    $profession_percentages[$row['metier']] = $row['total_users'];
+}
+
+foreach ($profession_percentages as $metier => $count) {
+    $percentage = ($count / $total_users) * 100;
+    $percentage = number_format($percentage, 2);
+    $profession_percentages[$metier] = $percentage;
+}
+
+$sql = "SELECT c.*, p.description, p.reference, p.prix, p.stock 
+        FROM commande c 
+        INNER JOIN produits p ON c.product_id = p.id 
+        WHERE c.order_state = 'paid'
+        ORDER BY c.order_date DESC
+        LIMIT 3";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $orders = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    $orders = [];
+}
 
 $conn->close();
 ?>
 <div class="container">
-    <h1 class="text-center font-weight-bold">Cette semaine</h1>
     <div class="row">
+    <h4 class="font-weight-bold">Cette semaine</h4>
         <div class="col-12 mt-2">
             <div class="row">
                 <div class="col-3 mb-2">
@@ -198,128 +210,56 @@ $conn->close();
                     </div>
                 </div>
             </div>
+            
         </div>
-        <div class="col-12 mt-2">
-        <h1 class="text-center font-weight-bold mt-4">Commandes</h1>
-            <div class="col-12 card widget-flat pt-5 mt-2">
-                <table class="table table-hover table-sm" id="commandeTable">
-                    <thead>
-                        <tr>
-                        <th class="text-center" scope="col">Date</th>
-                            <th class="text-center" scope="col">Nom</th>
-                            <th class="text-center" scope="col">Prénom</th>
-                            <th class="text-center" scope="col">Email</th>
-                            <th class="text-center" scope="col">Référence</th>
-                            <th class="text-center" scope="col">Description</th>
-                            <th class="text-center" scope="col">Quantité</th>
-                            <th class="text-center" scope="col">État</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if($commandes_est_vide){
-                                echo "<tr>";
-                                echo "<td colspan='6' class='text-center'>Malheureusement, il y'a aucune commande pour le moment.</td>";
-                                echo "</tr>";}
-                        foreach ($commandes as $commande) : ?>
-                            <tr>
-                                <td class="align-middle text-center"><?php echo $commande['order_date']; ?></td>
-                                <td class="align-middle text-center"><?php echo $commande['nom']; ?></td>
-                                <td class="align-middle text-center"><?php echo $commande['prenom']; ?></td>
-                                <td class="align-middle text-center"><?php echo $commande['email']; ?></td>
-                                <td class="align-middle text-center"><?php echo $commande['reference']; ?></td>
-                                <td class="align-middle text-center"><?php echo $commande['description']; ?></td>
-                                <td class="align-middle text-center"><?php echo $commande['quantity']; ?></td>
-                                <td class="align-middle text-center">
-                                    <?php 
-                                    if($commande['order_state']=="paid"){
-                                        echo '<span class="badge rounded-pill text-bg-success"><i class="fa-solid fa-money-bills"></i> Payé</span>'; 
-                                    }elseif($commande['order_state']=="in_cart"){
-                                        echo '<span class="badge rounded-pill text-bg-warning"><i class="fa-solid fa-cart-shopping"></i> En panier</span>'; 
-                                    }else{
-                                        echo '<span class="badge rounded-pill text-bg-danger"><i class="fa-solid fa-ban"></i> Échoué</span>'; 
-                                    }
-                                    ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-                <nav aria-label="Page navigation" id="pagination_commandeTable">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Suivant</a>
-                        </li>
-                    </ul>
-                </nav>
+    <div class="row">
+        <div class="col-6">
+        <h4 class="font-weight-bold mt-2">Statistiques</h4>
+            <div class="card widget-flat p-1">
+                <div class="card-body">
+                    <h6 class="text-muted">Pourcentage de clients féminines</h6>
+                    <div class="progress">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: <?php echo $percentage_female_users; ?>%" aria-valuenow="<?php echo $percentage_female_users; ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $percentage_female_users; ?>%</div>
+                    </div>
+                    <h6 class="mt-4 text-muted">Pourcentage de clientes masculins</h6>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: <?php echo $percentage_male_users; ?>%" aria-valuenow="<?php echo $percentage_male_users; ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $percentage_male_users; ?>%</div>
+                    </div>
+                </div>
             </div>
+            <div class="card widget-flat mt-3 p-1">
+                <div class="card-body">
+                    <?php foreach ($profession_percentages as $metier => $percentage): ?>
+                        <h6 class="text-muted mt-2">Pourcentage de clients <?php echo $metier; ?></h6>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: <?php echo $percentage; ?>%" aria-valuenow="<?php echo $percentage; ?>" aria-valuemin="0" aria-valuemax="100"><?php echo $percentage; ?>%</div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div> 
         </div>
-        <div class="col-12 mt-2">
-        <h1 class="text-center font-weight-bold mt-4">Paiements</h1>
-            <div class="col-12 card widget-flat pt-5 mt-2">
-                <table class="table table-hover table-sm" id="paymentTable">
-                    <thead>
-                        <tr>
-                        <th class="text-center" scope="col">Date</th>
-                            <th class="text-center" scope="col">Nom</th>
-                            <th class="text-center" scope="col">Prénom</th>
-                            <th class="text-center" scope="col">Email</th>
-                            <th class="text-center" scope="col">Mode de paiement</th>
-                            <th class="text-center" scope="col">Montant</th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if($payments_est_vide){
-                                echo "<tr>";
-                                echo "<td colspan='6' class='text-center'>Malheureusement, il y'a aucun paiement pour le moment.</td>";
-                                echo "</tr>";}
-                        foreach ($payments as $payment) : ?>
-                            <tr>
-                                <td class="align-middle text-center"><?php echo $payment['payment_date']; ?></td>
-                                <td class="align-middle text-center"><?php echo $payment['prenom']; ?></td>
-                                <td class="align-middle text-center"><?php echo $payment['nom']; ?></td>
-                                <td class="align-middle text-center"><?php echo $payment['email']; ?></td>
-                                <td class="align-middle text-center">
-                                    <?php 
-                                    if($payment['mode_paiement']== 'paypal'){
-                                        echo '<span class="badge rounded-pill text-bg-primary"><i class="fa-brands fa-paypal"></i> PayPal</span>';
-                                    }elseif($payment['mode_paiement']== 'card'){
-                                        echo '<span class="badge rounded-pill text-bg-secondary"><i class="fa-solid fa-credit-card"></i> Carte</span>';
-                                    }
-                                    ?>
-                                </td>
-                                <td class="align-middle text-center"><?php echo $payment['montant'].$settings["devise"]; ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-                <nav aria-label="Page navigation" id="pagination_paymentTable">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Suivant</a>
-                        </li>
-                    </ul>
-                </nav>
+        <div class="col-6">
+            <h4 class="font-weight-bold mt-2">Dernières commandes</h4>
+            <div class="card widget-flat p-1">
+                <div class="list-group mb-4">
+                    <?php if($orders == []){echo "<p class='text-center mt-4'>Malheureusement, il n'y a aucune commande pour le moment.</p>";}else{foreach ($orders as $order): ?>
+                        <div class="list-group-item border-0">
+                            <div class="d-flex align-items-center">
+                                <img src="<?php echo 'img/produits/' . $order['product_id'] . '.jpg'; ?>" class="mr-3" height="100" alt="Product Image">
+                                <div>
+                                    <h5 class="mb-1"><?php echo $order['description']; ?></h5>
+                                    <p class="mb-1"><?php echo $order['reference']; ?></p>
+                                    <p class="text-muted">Date de commande: <?php echo date('d/m/Y H:i:s', strtotime($order['order_date'])); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach;} ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
+</div>
 </div>
 </div>
 <?php include 'php/footer.php'; ?>
