@@ -108,7 +108,7 @@ if(isset($_GET['cat'])) {
         <div class="container">
             <div class="row">
                 <div class="col-md-12 text-right">
-                    <button id="btn-cacher-stock" class="btn-primary btn mt-2">Afficher stock</button>
+                    <button id="btn-cacher-stock" hidden class="btn-primary btn mt-2">Afficher stock</button>
                 </div>
             </div>
         </div>
@@ -141,7 +141,7 @@ if(isset($_GET['cat'])) {
                     $(`#input_quantity_${productId}`).val('0');
                     $(`#icon-panier-value`).html(responseData.cart_nb_products);
                     $(`#btn_minus_${productId}`).prop('disabled', true); 
-                    $(`#add_to_cart_${productId}`).prop('disabled', true); 
+                    $(`#add_to_cart_${productId}`).prop('disabled', true);
                 }
             },
             error: function(xhr, status, error) {

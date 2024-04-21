@@ -58,6 +58,9 @@
 $(document).ready(function() {
     $('#login-form').submit(function(e) {
         e.preventDefault();
+        if (!validateFormInputs()) {
+            return;
+        }
         var formData = $(this).serialize();
         $.ajax({
             type: 'POST',
@@ -81,6 +84,26 @@ $(document).ready(function() {
         });
     });
 });
+function validateFormInputs() {
+    var isValid = true;
+    if ($.trim($('#input-login-email').val())=='') {
+        $('#error-login-email').html('Veuillez entrer un email.');
+        $('#input-login-email').addClass('is-invalid');
+        isValid = false;
+    } else {
+        $('#error-login-email').html('');
+        $('input-login-email').removeClass('is-invalid');
+    }
 
+    if ($.trim($('#input-login-password').val())=='') {
+        $('#error-login-password').html('Veuillez entrer un mot de passe.');
+        $('#input-login-password').addClass('is-invalid');
+        isValid = false;
+    } else {
+        $('#error-login-password').html('');
+        $('input-login-password').removeClass('is-invalid');
+    }
+    return isValid;
+}
 
 </script>

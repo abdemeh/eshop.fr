@@ -29,7 +29,7 @@ function verifierConnexion($login, $mot_de_passe) {
                 }
                 $result['success'] = 1;
                 $result['message'] = "Connexion réussie, bienvenue.";
-                $result['role'] = $row['role']; // Add role information to the result
+                $result['role'] = $row['role'];
             }
         } else {
             $result['success'] = 0;

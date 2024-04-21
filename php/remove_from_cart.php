@@ -9,6 +9,7 @@ if (isset($_POST['product_id'])) {
     $query = "SELECT sum(quantity) as quantity FROM commande WHERE product_id = $product_id AND user_id = $user_id";
     $result = $conn->query($query);
 
+    
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $quantity = $row['quantity'];
@@ -18,21 +19,20 @@ if (isset($_POST['product_id'])) {
             $updateQuery = "UPDATE produits SET stock = stock + $quantity WHERE id = $product_id";
             $conn->query($updateQuery);
 
-            header('Location: ../panier.php');
+            echo json_encode(['success' => true]);
             exit();
         } else {
-            header('Location: ../panier.php');
+            echo json_encode(['error' => 'Failed to remove item from cart']);
             exit();
         }
     } else {
-        // Le produit n'est pas trouvé dans le panier de l'utilisateur
-        header('Location: ../panier.php');
+        echo json_encode(['error' => 'Product not found in cart']);
         exit();
     }
 
     $conn->close();
 } else {
-    header('Location: ../panier.php');
+    echo json_encode(['error' => 'Product ID not provided']);
     exit();
 }
 ?>
