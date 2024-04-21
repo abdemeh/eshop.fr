@@ -6,7 +6,7 @@ include 'php/header.php';
 include 'php/bddData.php';
 include_once 'php/main.php';
 
-$settings = getSettings();
+$settings = getSettings('settings.json');
 
 $nb_clients=0;
 $nb_commandes=0;

@@ -1,7 +1,7 @@
 <?php 
 include_once ("php/main.php");
 
-$settings = getSettings();
+$settings = getSettings('settings.json');
 
 // Récupération des catégories de produits depuis la base de données
 $conn = new mysqli($host, $username, $password, $database);

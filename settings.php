@@ -3,7 +3,7 @@
 include 'php/header.php';
 include_once 'php/main.php';
 
-$settings = getSettings();
+$settings = getSettings('settings.json');
 
 ?>
 <div class="container">

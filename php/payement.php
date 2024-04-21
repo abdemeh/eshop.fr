@@ -5,7 +5,7 @@ include "mail_send.php";
 include_once 'main.php';
 require "../vendor/autoload.php";
 
-$settings = getSettings();
+$settings = getSettings('settings.json');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION["user_id"]; 

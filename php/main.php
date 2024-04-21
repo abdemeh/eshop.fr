@@ -32,8 +32,7 @@
         }
     }
 
-    function getSettings() {
-        $settings_file = 'settings.json';
+    function getSettings($settings_file) {
     
         $default_settings = [
             'devise' => '€',

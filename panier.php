@@ -4,7 +4,7 @@ include 'php/varSession.inc.php';
 include 'php/bddData.php';
 include_once 'php/main.php';
 
-$settings = getSettings();
+$settings = getSettings('settings.json');
 
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 

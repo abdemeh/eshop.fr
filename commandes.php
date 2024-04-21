@@ -6,7 +6,7 @@ include 'php/header.php';
 include 'php/bddData.php';
 include_once 'php/main.php';
 
-$settings = getSettings();
+$settings = getSettings('settings.json');
     $commandes_est_vide = false;
     $sql = "SELECT u.nom, u.prenom, u.email, p.reference, p.description, c.quantity, c.order_date, c.order_state 
             FROM commande c 

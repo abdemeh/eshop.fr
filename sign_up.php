@@ -1,5 +1,4 @@
 <?php
-
 include "php/header.php";
 include "php/mail_send.php";
 include "php/main.php";
@@ -23,231 +22,69 @@ $conn->close();
                     <form id="contact-form" method="post">
                         <div class="form-row">
                             <div class="col-md-12">
-                                <div id="error-message">
-                                <?php if (isset($_GET["error"])){
-                                    echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
-                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                                    }elseif(isset($_GET["success"])){
-                                        echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
-                                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                                    } 
-                                ?>
-                                </div>
-                                <?php if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                                    // Récupérer les données du formulaire
-                                    $nom = $_POST["nom"];
-                                    $prenom = $_POST["prenom"];
-                                    $email = $_POST["email"];
-                                    $mdp = $_POST["mdp"];
-                                    $genre = isset($_POST["genre"]) ? $_POST["genre"] : "";
-                                    $date_naissance = $_POST["date_naissance"];
-                                    $metier = $_POST["metier"];
-
-                                    $errors = [];
-                                    if (empty($nom)) {
-                                        $errors["nom"] = "Veuillez entrer un nom!";
-                                    }
-
-                                    if (empty($prenom)) {
-                                        $errors["prenom"] = "Veuillez entrer un prénom!";
-                                    }
-
-                                    if (empty($email)) {
-                                        $errors["email"] = "Veuillez entrer un email!";
-                                    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                                        $errors["email"] = "Veuillez entrer un email valide!";
-                                    }
-
-                                    if (empty($mdp)) {
-                                        $errors["mdp"] = "Veuillez entrer un mot de passe!";
-                                    }
-
-                                    if (empty($date_naissance)) {
-                                        $errors["date_naissance"] = "Veuillez entrer une date!";
-                                    }
-
-                                    if (empty($genre)) {
-                                        $errors["genre"] = "Veuillez sélectionner un genre!";
-                                    }
-
-                                    if ($metier == "Sélectionner") {
-                                        $errors["metier"] = "Veuillez choisir un métier!";
-                                    }
-                                    if (!empty($errors)) {
-                                        echo "<script>";
-                                        echo "function displayErrors() {";
-                                        foreach ($errors as $field => $error) {
-                                            echo '$("#error-' . $field . '").html("' . $error . '");';
-                                            echo '$("#input-' . $field . '").addClass("is-invalid");';
-                                        }
-                                        echo "}";
-                                        echo "</script>";
-                                    } else {
-                                        $token = md5(uniqid(mt_rand(), true));
-
-                                        include "php/bddData.php";
-                                        $sql = "INSERT INTO users (nom, prenom, email, mdp, genre, date_naissance, metier_id, role, verification_token) 
-                                                VALUES ('$nom', '$prenom', '$email', '".md5($mdp)."', '$genre', '$date_naissance', $metier, 'user', '$token')";
-                                        try {
-                                            if ($conn->query($sql) === TRUE) {
-                                                echo "<script>window.location.href='sign_up.php?success=Un email de vérification viens de vous être envoyé.';</script>";
-                                                $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-                                                $host = $_SERVER['HTTP_HOST'];
-                                                $path = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-                                                $link = $protocol . '://' . $host . $path ;
-                                                $email_body ='
-                                                            <!DOCTYPE html>
-                                                            <html lang="fr">
-                                                            <head>
-                                                                <meta charset="UTF-8">
-                                                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                                                <title>Finaliser votre inscription</title>
-                                                                <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-                                                                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-                                                                <style>
-                                                                    body {
-                                                                        font-family: "Poppins", sans-serif !important;
-                                                                    }
-                                                                    .btn{
-                                                                        background: #f8b739;
-                                                                        border-color: #f8b739;
-                                                                        color: #fff;
-                                                                        cursor: pointer;
-                                                                        border-radius: 25px;
-                                                                        padding: 10px 30px 10px 30px;
-                                                                        font-weight: 500;
-                                                                    }
-                                                                    .btn:hover{
-                                                                        background: #ebb03a;
-                                                                        border-color: #ebb03a;
-                                                                        color: #fff;
-                                                                        cursor: pointer;
-                                                                    }
-                                                                    .icon{
-                                                                        background: #f8b739;
-                                                                        border-color: #f8b739;
-                                                                        color: #fff;
-                                                                        cursor: pointer;
-                                                                        border-radius: 100px;
-                                                                        padding: 15px;
-                                                                        font-weight: 500;  
-                                                                        }
-                                                                        .card {
-                                                                            position: relative;
-                                                                            display: -webkit-box;
-                                                                            display: -ms-flexbox;
-                                                                            display: flex;
-                                                                            -webkit-box-orient: vertical;
-                                                                            -webkit-box-direction: normal;
-                                                                            -ms-flex-direction: column;
-                                                                            flex-direction: column;
-                                                                            min-width: 0;
-                                                                            word-wrap: break-word;
-                                                                            background-color: #fff;
-                                                                            background-clip: border-box;
-                                                                            border: none;
-                                                                            border-radius: 1.25rem;
-                                                                            box-shadow: rgba(0, 0, 0, 0.06) 7px 7px 20px 0px;
-                                                                        } 
-                                                                    
-                                                                </style>
-                                                            </head>
-                                                            <body>
-                                                                <div class="container mt-4">
-                                                                    <div class="card p-4"> 
-                                                                        <div class="row justify-content-center mb-4 mt-4">
-                                                                            <div class="col-10 col-md-8 col-lg-6 text-center">
-                                                                                <center><h1 class="mb-4"><img src="https://i.ibb.co/8gWprM7/logo.png" height="40" alt=""></h1></center>
-                                                                                <center><h2><b>Veuillez v&eacute;rifier votre compte</b></h2></center>
-                                                                                <center><p>Vous &ecirc;tes sur le point d&#39;obtenir votre compte.<br>Pour v&eacute;rifier votre compte, veuillez cliquer sur le bouton ci-dessous :</p></center>
-                                                                                <center><a href="'.$link.'/php/verify_email.php?token='.$token.'" class="btn btn-primary">V&eacute;rifier votre compte</a></center>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </body>
-                                                            </html>  
-                                                            ';
-                                                $resultSendVerificationEmail = sendCustomEmail($email, 'V&eacute;rification de cr&eacute;ation de compte &agrave; eshop.fr', $email_body);
-                                                if($resultSendVerificationEmail[0]==true){
-                                                    echo "<script>window.location.href='sign_up.php?success=Email envoyé avec succès';</script>";
-                                                }else{
-                                                    echo "<script>window.location.href='sign_up.php?error=Erreur: ".$resultSendVerificationEmail[0]."';</script>";
-                                                }
-                                            }
-                                        }
-                                        catch (mysqli_sql_exception $e) {
-                                            if ($e->getCode() == 1062) {
-                                                echo "<script>window.location.href='sign_up.php?error=Un autre utilisateur avec cet email existe déjà. Veuillez choisir une autre adresse email.';</script>";
-                                            } else {
-                                                echo "<script>window.location.href='sign_up.php?error=Erreur: ".$e->getMessage()."';</script>";
-                                            }
-                                        }
-                                        $conn->close();
-                                    }
-                                } ?>
+                                <div id="error-message"></div>
                             </div>
                             <div class="form-group col-6">
                                 <div class="has-validation">
                                     <h6 class="text-muted">Nom</h6>
-                                    <input id="input-nom" name="nom" class="form-control input-only-text" type="text" value="<?php echo isset(
-                                        $_POST["nom"])? $_POST["nom"]: ""; ?>">
+                                    <input id="input-nom" name="nom" class="form-control input-only-text" type="text"
+                                        value="<?php echo isset($_POST["nom"]) ? $_POST["nom"] : ""; ?>">
                                 </div>
                                 <div class="text-danger" id="error-nom"></div>
                             </div>
                             <div class="form-group col-6">
                                 <div class="has-validation">
                                     <h6 class="text-muted">Prénom</h6>
-                                    <input id="input-prenom" name="prenom" class="form-control input-only-text" type="text" value="<?php echo isset(
-                                        $_POST["prenom"])? $_POST["prenom"]: ""; ?>">
+                                    <input id="input-prenom" name="prenom" class="form-control input-only-text" type="text"
+                                        value="<?php echo isset($_POST["prenom"]) ? $_POST["prenom"] : ""; ?>">
                                 </div>
-                                <div class="text-danger" id="error-prenom"></div>     
+                                <div class="text-danger" id="error-prenom"></div>
                             </div>
                             <div class="form-group col-12">
                                 <div class="has-validation">
                                     <h6 class="text-muted">E-mail</h6>
-                                    <input id="input-email" name="email" class="form-control" type="text" value="<?php echo isset(
-                                        $_POST["email"])? $_POST["email"]: ""; ?>">
+                                    <input id="input-email" name="email" class="form-control" type="text"
+                                        value="<?php echo isset($_POST["email"]) ? $_POST["email"] : ""; ?>">
                                 </div>
-                                <div class="text-danger" id="error-email"></div>  
+                                <div class="text-danger" id="error-email"></div>
                             </div>
                             <div class="form-group col-12">
                                 <div class="has-validation">
                                     <h6 class="text-muted">Mot de passe</h6>
-                                    <input id="input-mdp" name="mdp" class="form-control" type="password" value="<?php echo isset(
-                                        $_POST["mdp"])? $_POST["mdp"]: ""; ?>">
+                                    <input id="input-mdp" name="mdp" class="form-control" type="password"
+                                        value="<?php echo isset($_POST["mdp"]) ? $_POST["mdp"] : ""; ?>">
                                 </div>
-                                <div class="text-danger" id="error-mdp"></div>  
+                                <div class="text-danger" id="error-mdp"></div>
                             </div>
-                            
                             <div class="form-group col-12">
                                 <div class="has-validation">
                                     <h6 class="text-muted">Genre</h6>
                                     <div class="form-check inline">
                                         <div class="custom-control custom-radio custom-control-inline">
-                                            <input <?php echo isset($_POST["genre"]) && $_POST["genre"] == "M" ? "checked" : ""; ?> type="radio" id="customRadioInline1" name="genre" value="M" class="custom-control-input">
-                                            <label class="custom-control-label" for="customRadioInline1">Masculin</label>
+                                            <input <?php echo isset($_POST["genre"]) && $_POST["genre"] == "M" ? "checked" : ""; ?>
+                                                type="radio" id="radio-genre-m" name="genre" value="M" class="custom-control-input">
+                                            <label class="custom-control-label" for="radio-genre-m">Masculin</label>
                                         </div>
                                     </div>
                                     <div class="form-check inline">
                                         <div class="custom-control custom-radio custom-control-inline">
-                                            <input <?php echo isset($_POST["genre"]) && $_POST["genre"] == "F" ? "checked" : ""; ?> type="radio" id="customRadioInline2" name="genre" value="F" class="custom-control-input">
-                                            <label class="custom-control-label" for="customRadioInline2">Féminin</label>
+                                            <input <?php echo isset($_POST["genre"]) && $_POST["genre"] == "F" ? "checked" : ""; ?>
+                                                type="radio" id="radio-genre-f" name="genre" value="F" class="custom-control-input">
+                                            <label class="custom-control-label" for="radio-genre-f">Féminin</label>
                                         </div>
                                     </div>
-
                                 </div>
-                                <div class="text-danger" id="error-genre"></div>  
+                                <div class="text-danger" id="error-genre"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <div class="has-validation">
                                     <h6 class="text-muted">Date de naissance</h6>
-                                    <input id="input-date_naissance" type="date"  name="date_naissance" class="form-control" 
-                                    min="<?php echo date('Y-m-d', strtotime('-90 years')); ?>" 
-                                    max="<?php echo date('Y-m-d', strtotime('-16 years')); ?>" 
-                                    value="<?php echo isset($_POST["date_naissance"]) ? $_POST["date_naissance"] : ""; ?>"  />
+                                    <input id="input-date_naissance" type="date" name="date_naissance" class="form-control"
+                                        min="<?php echo date('Y-m-d', strtotime('-90 years')); ?>"
+                                        max="<?php echo date('Y-m-d', strtotime('-16 years')); ?>"
+                                        value="<?php echo isset($_POST["date_naissance"]) ? $_POST["date_naissance"] : ""; ?>" />
                                 </div>
-                                <div class="text-danger" id="error-date_naissance"></div>  
+                                <div class="text-danger" id="error-date_naissance"></div>
                             </div>
                             <div class="form-group col-md-6">
                                 <h6 class="text-muted">Métier</h6>
@@ -261,8 +98,7 @@ $conn->close();
                                     ?>
                                 </select>
                                 <div class="text-danger" id="error-metier"></div>
-                            </div> 
-
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
@@ -280,11 +116,89 @@ $conn->close();
 </div>
 </div>
 </div>
+</div>
 <?php include "php/footer.php"; ?>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Call the displayErrors function after the page has loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        displayErrors();
+$(document).ready(function () {
+    $('#contact-form').submit(function (e) {
+        e.preventDefault(); // Prevent form submission
+        
+        // Validate form inputs
+        if (!validateFormInputs()) {
+            return; // Exit function if inputs are not valid
+        }
+
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        // Send AJAX request
+        $.ajax({
+            type: 'POST',
+            url: 'php/process_signup.php', // Update with your PHP file handling the form submission
+            data: formData,
+            dataType: 'json', // Expect JSON response from the server
+            success: function (response) {
+                // Check the response for success or error
+                if (response.success == 1) {
+                    // Successful registration, display success message
+                    $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                } else {
+                    // Registration failed, display error message
+                    $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors if AJAX request fails
+                console.error(xhr.responseText);
+                $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">An error occurred while processing your request. Please try again later.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            }
+        });
     });
+});
+
+function validateFormInputs() {
+    var isValid = true;
+
+    // Define an array of objects containing field information
+    var fields = [
+        { inputId: '#input-metier', errorId: '#error-metier', errorMessage: 'Veuillez choisir une option.' },
+        { inputId: '#input-nom', errorId: '#error-nom', errorMessage: 'Veuillez entrer un nom.' },
+        { inputId: '#input-prenom', errorId: '#error-prenom', errorMessage: 'Veuillez entrer un prénom.' },
+        { inputId: '#input-email', errorId: '#error-email', errorMessage: 'Veuillez entrer un email.' },
+        { inputId: '#input-mdp', errorId: '#error-mdp', errorMessage: 'Veuillez entrer un mot de passe.' },
+        { inputId: '#input-date_naissance', errorId: '#error-date_naissance', errorMessage: 'Veuillez entrer une date.' }
+    ];
+
+    // Loop through each field to perform validation
+    fields.forEach(function(field) {
+        var inputValue = $.trim($(field.inputId).val());
+        var errorElement = $(field.errorId);
+
+        if (inputValue === '' || inputValue === 'Sélectionner') {
+            errorElement.html(field.errorMessage);
+            $(field.inputId).addClass('is-invalid');
+            isValid = false;
+        } else {
+            errorElement.html('');
+            $(field.inputId).removeClass('is-invalid');
+        }
+    });
+
+    // Check if no gender is selected
+    if ($('input[name="genre"]:checked').length === 0) {
+        $('#error-genre').html('Veuillez choisir un genre.');
+        $('input[name="genre"]').addClass('is-invalid');
+        isValid = false;
+    } else {
+        $('#error-genre').html('');
+        $('input[name="genre"]').removeClass('is-invalid');
+    }
+
+    return isValid;
+}
+
+
+
 </script>

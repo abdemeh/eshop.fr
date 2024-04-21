@@ -1,6 +1,4 @@
-<?php
-include 'php/header.php';
-?>
+<?php include 'php/header.php'; ?>
 <div class="container">
     <div class="container">
         <h1 class="text-center font-weight-bold mb-4">Se connecter</h1>
@@ -9,16 +7,8 @@ include 'php/header.php';
             <div class="col-4">
                 <div class="card p-4 mt-2">
                     <div id="error-message">
-                        <?php if (isset($_GET["error"])){
-                            echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
-                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                        }elseif(isset($_GET["success"])){
-                            echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
-                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                        } 
-                        ?>
                     </div>
-                    <form method="post" action="php/authentification.php">
+                    <form id="login-form" method="post" action="php/authentification.php">
                         <div class="d-flex">
                             <img src="img/login.svg" class="img-fluid mb-4" alt="">
                         </div>
@@ -63,5 +53,36 @@ include 'php/header.php';
 </div>
 </div>
 </div>
-                
 <?php include 'php/footer.php'; ?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#login-form').submit(function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            success: function(response) {
+                var jsonResponse = JSON.parse(response);
+                if (jsonResponse.success === 1) {
+                    // $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">' + jsonResponse.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    if(jsonResponse.role === 'user') {
+                        window.location.href = 'index.php';
+                    } else if(jsonResponse.role === 'admin') {
+                        window.location.href = 'admin.php';
+                    }
+                } else {
+                    $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">' + jsonResponse.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">' + error + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            }
+        });
+    });
+});
+
+
+</script>
