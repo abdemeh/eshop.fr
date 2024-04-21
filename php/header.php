@@ -168,7 +168,6 @@ window.addEventListener('load', function () {
                                 $encodedCategory = urlencode($category["libelle"]);
                                 echo '<li class="nav-link"><a href="produits.php?cat='.$encodedCategory.'"><i class="'.$category["icon"].' icon"></i><span class="text nav-text">'.$category["libelle"].'</span></a></li>';
                             }
-                            echo '<li class="nav-link"><a href="contact.php"><i class="fa-solid fa-envelope-open-text icon"></i><span class="text nav-text">Contact</span></a></li>';
                         }
                     ?> 
                 </ul>
@@ -189,6 +188,7 @@ window.addEventListener('load', function () {
                             }
                         }
                         else{
+                            echo '<li class="nav-link"><a href="contact.php"><i class="fa-solid fa-pen-to-square icon"></i><span class="text nav-text">Contact</span></a></li>';
                             if (isset($_SESSION["user_id"])) {
                                 $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
                                 if (file_exists($userImagePath)) {
@@ -199,8 +199,10 @@ window.addEventListener('load', function () {
                             } else {
                                 echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
                             }
-                            echo '<li class="nav-link"><a href="panier.php"><i class="fa-solid fa-cart-shopping icon" id="icon-panier">';if($count_panier>0){echo '<span class="badge badge-pill badge-primary">'.$count_panier.'</span>';}echo '</i><span class="text nav-text">Panier</span></a></li>';
+                            if (isset($_SESSION["user_id"])) {
+                                echo '<li class="nav-link"><a href="panier.php"><i class="fa-solid fa-cart-shopping icon" id="icon-panier">';if($count_panier>0){echo '<span class="badge badge-pill badge-primary">'.$count_panier.'</span>';}echo '</i><span class="text nav-text">Panier</span></a></li>';
                         }
+                            }
                         if (isset($_SESSION["user_id"])){
                             echo '<li onclick="confirmLogout()" class="nav-link"><a href="#"><i class="fa-solid fa-right-from-bracket icon"></i><span class="text nav-text">Se déconnecter</span></a></li>';
                         }

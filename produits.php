@@ -81,7 +81,7 @@ if(isset($_GET['cat'])) {
                                                     <i class="fa fa-minus"></i>
                                                 </button>
                                             </div>
-                                            <input class="form-control quantity text-center" min="0" name="quantity" value="0" type="number" style="height: auto;">
+                                            <input class="form-control quantity text-center input-only-numbers" min="0" name="quantity" value="0" type="number" style="height: auto;">
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-primary btn-plus">
                                                     <i class="fa fa-plus"></i>

@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mode_paiement = $_POST["mode_paiement"];
     $user_email ="contact@eshop.fr";
 
-    $sql = "UPDATE commande SET order_date = NOW(), order_state = 'paid' WHERE user_id = $user_id";
+    $sql = "UPDATE commande SET order_state = 'paid' WHERE user_id = $user_id";
     $sql_insert = "INSERT INTO payment (user_id, payment_date, montant, mode_paiement) VALUES ($user_id, NOW(), $montant_tt, '$mode_paiement')";
 
     $sql_get_email = "SELECT email FROM users WHERE id = $user_id";

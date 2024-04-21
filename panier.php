@@ -53,14 +53,11 @@ if (!$user_id) {
                         // Display cart items
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>";
-                            // Display product details
-                            // Adjust the column names based on your database schema
                             echo "<td class='align-middle text-center'><div class='h-10'><img class='zoomable-image' src='img/produits/".$row['product_id'].".jpg' height='100px' alt=''></div></td>";
                             echo "<td class='align-middle text-center'>" . $row['reference'] . "</td>";
                             echo "<td class='align-middle text-center'>" . $row['description'] . "</td>";
                             echo "<td class='align-middle text-center'>" . $row['prix'] . " ".$settings["devise"]."</td>";
                             echo "<td class='align-middle text-center table-stock'>" . $row['total_quantity'] . "</td>";
-                            // Add a form to remove the item from the cart
                             echo "<td class='align-middle text-center'><form method='post' action='php/remove_from_cart.php'><input type='hidden' name='product_id' value='" . $row['product_id'] . "'><button type='submit' class='btn btn-primary btn-trash'><i class='fa fa-trash'></i></button></form></td>";
                             echo "</tr>";
                             $est_vide=false;
@@ -183,15 +180,15 @@ if (!$user_id) {
 							<div class="card-header bg-transparent border-0">
 								<div class="bg-white">
 									<ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
-										<li id="btn-card" class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active"><i class="fa-solid fa-credit-card"></i> Carte de crédit</a> </li>
-										<li id="btn-paypal" class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link "><i class="fa-brands fa-paypal"></i> Paypal</a> </li>
+										<li class="nav-item"> <a id="btn-card" data-toggle="pill" href="#credit-card" class="nav-link active"><i class="fa-solid fa-credit-card"></i> Carte de crédit</a> </li>
+										<li class="nav-item"> <a id="btn-paypal" data-toggle="pill" href="#paypal" class="nav-link "><i class="fa-brands fa-paypal"></i> Paypal</a> </li>
 									</ul>
 								</div>
 								<div class="tab-content">
 									<div id="credit-card" class="tab-pane fade show active pt-3">
 										<form role="form" onsubmit="event.preventDefault()">
 											<div class="form-group">
-												<input type="text" name="username" placeholder="Nom du titulaire de la carte" required class="form-control "> 
+												<input type="text" name="username" placeholder="Nom du titulaire de la carte" required class="form-control input-only-text"> 
 											</div>
 											<div class="form-group">
 												<div class="input-group">
@@ -262,5 +259,4 @@ if (!$user_id) {
 		</div>
 	</div>
 </div>
-
 <?php include 'php/footer.php'; ?>

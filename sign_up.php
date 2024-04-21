@@ -190,7 +190,7 @@ $conn->close();
                             <div class="form-group col-6">
                                 <div class="has-validation">
                                     <h6 class="text-muted">Nom</h6>
-                                    <input id="input-nom" name="nom" class="form-control" type="text" value="<?php echo isset(
+                                    <input id="input-nom" name="nom" class="form-control input-only-text" type="text" value="<?php echo isset(
                                         $_POST["nom"])? $_POST["nom"]: ""; ?>">
                                 </div>
                                 <div class="text-danger" id="error-nom"></div>
@@ -198,7 +198,7 @@ $conn->close();
                             <div class="form-group col-6">
                                 <div class="has-validation">
                                     <h6 class="text-muted">Prénom</h6>
-                                    <input id="input-prenom" name="prenom" class="form-control" type="text" value="<?php echo isset(
+                                    <input id="input-prenom" name="prenom" class="form-control input-only-text" type="text" value="<?php echo isset(
                                         $_POST["prenom"])? $_POST["prenom"]: ""; ?>">
                                 </div>
                                 <div class="text-danger" id="error-prenom"></div>     

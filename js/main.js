@@ -271,10 +271,35 @@ function showRows(tableId, pageNumber, rowsPerPage) {
     }
 }
 
-//Formater input to numbers
+//Formater inputs
 $(document).ready(function() {
     $('.input-only-numbers').on('input', function() {
         $(this).val($(this).val().replace(/\D/g, ''));
+    });
+    $('.input-card-number').on('input', function() {
+        $(this).val($(this).val().replace(/\D/g, ''));
+        var cardNumber = $(this).val().replace(/-/g, '');
+        var formattedCardNumber = '';
+        for (var i = 0; i < cardNumber.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedCardNumber += '-';
+            }
+            formattedCardNumber += cardNumber[i];
+        }
+        $(this).val(formattedCardNumber);
+    });
+    $('.input-only-text').on('input', function() {
+        $(this).val($(this).val().replace(/[^a-zA-Z\s]/g, ''));
+    });
+});
+
+//Paypal ou credit card
+$(document).ready(function(){
+    $('#btn-card').click(function(){
+        $('#mode_paiement').attr('value', 'card');
+    });
+    $('#btn-paypal').click(function(){
+        $('#mode_paiement').attr('value', 'paypal');
     });
 });
 
@@ -345,29 +370,3 @@ changePage("commandeTable", "pagination_commandeTable", 1, 5);
 $(function() {
 $('[data-toggle="tooltip"]').tooltip()
 })
-
-//Formater Carte bancaire
-$(document).ready(function() {
-    $('.input-card-number').on('input', function() {
-        var cardNumber = $(this).val().replace(/\D/g, '');
-        var formattedNumber = '';
-        for (var i = 0; i < cardNumber.length; i++) {
-            if (i > 0 && i % 4 == 0) {
-                formattedNumber += '-';
-            }
-            formattedNumber += cardNumber[i];
-        }
-        $(this).val(formattedNumber);
-    });
-});
-
-
-$(document).ready(function(){
-    $('#btn-card').click(function(){
-        $('#mode_paiement').val('card');
-    });
-
-    $('#btn-paypal').click(function(){
-        $('#mode_paiement').val('paypal');
-    });
-});

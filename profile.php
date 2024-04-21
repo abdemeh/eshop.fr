@@ -107,14 +107,14 @@ include 'php/header.php';
                                 <div class="form-group col-md-6">
                                     <div class="has-validation">
                                         <h6 class="text-muted">Nom</h6>
-                                        <input id="input-nom" name="nom" class="form-control" type="text" value="<?php echo $userData['nom'] ?? ''; ?>">
+                                        <input id="input-nom" name="nom" class="form-control input-only-text" type="text" value="<?php echo $userData['nom'] ?? ''; ?>">
                                     </div>
                                     <div class="text-danger" id="error-nom"></div>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <div class="has-validation">
                                         <h6 class="text-muted">Prenom</h6>
-                                        <input id="input-prenom" name="prenom" class="form-control" type="text" value="<?php echo $userData['prenom'] ?? ''; ?>">
+                                        <input id="input-prenom" name="prenom" class="form-control input-only-text" type="text" value="<?php echo $userData['prenom'] ?? ''; ?>">
                                     </div>
                                     <div class="text-danger" id="error-prenom"></div>
                                 </div>
