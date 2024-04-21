@@ -200,7 +200,7 @@ window.addEventListener('load', function () {
                                 echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
                             }
                             if (isset($_SESSION["user_id"])) {
-                                echo '<li class="nav-link"><a href="panier.php"><i class="fa-solid fa-cart-shopping icon" id="icon-panier">';if($count_panier>0){echo '<span class="badge badge-pill badge-primary">'.$count_panier.'</span>';}echo '</i><span class="text nav-text">Panier</span></a></li>';
+                                echo '<li class="nav-link"><a href="panier.php"><i class="fa-solid fa-cart-shopping icon" id="icon-panier"><span id="icon-panier-value" class="badge badge-pill badge-primary">'.$count_panier.'</span></i><span class="text nav-text">Panier</span></a></li>';
                         }
                             }
                         if (isset($_SESSION["user_id"])){

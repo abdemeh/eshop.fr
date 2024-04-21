@@ -1,5 +1,4 @@
 <?php
-
 include 'php/header.php';
 include 'php/bddData.php';
 include_once 'php/main.php';
@@ -69,28 +68,24 @@ if(isset($_GET['cat'])) {
                             <td class="align-middle text-center"><?php echo $product['reference']; ?></td>
                             <td class="align-middle text-center"><?php echo $product['description']; ?></td>
                             <td class="align-middle text-center"><?php echo $product['prix']." ".$settings["devise"]; ?></td>
-                            <td class="align-middle text-center table-stock" hidden="hidden"><?php echo $product['stock']; ?></td>
+                            <td class="align-middle text-center table-stock" id="stock_<?php echo $product['id']; ?>" hidden="hidden"><?php echo $product['stock']; ?></td>
                             <td class="align-middle text-center">
-                                <form method="post" action="php/add_to_cart.php">
-                                    <input type="hidden" name="productId" value="<?php echo $product['id']; ?>">
-                                    <!-- <input type="hidden" name="quantity" value="0"> -->
-                                    <div class="input-group-wrapper">
-                                        <div class="input-group inline-group">
-                                            <div class="input-group-prepend">
-                                                <button disabled type="button" class="btn btn-primary btn-minus">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                            </div>
-                                            <input class="form-control quantity text-center input-only-numbers" min="0" name="quantity" value="0" type="number" style="height: auto;">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn btn-primary btn-plus">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
+                                <div class="input-group-wrapper">
+                                    <div class="input-group inline-group">
+                                        <div class="input-group-prepend">
+                                            <button disabled type="button" id="btn_minus_<?php echo $product['id'];?>" class="btn btn-primary btn-minus">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
                                         </div>
-                                        <button disabled class="btn btn-primary btn-add-to-cart mt-2" type="submit">Ajouter au panier</button>
+                                        <input class="form-control quantity text-center input-only-numbers" id="input_quantity_<?php echo $product['id']; ?>" min="0" name="quantity_<?php echo $product['id']; ?>" value="0" type="number" style="height: auto;">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-primary btn-plus">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </form>
+                                    <button disabled class="btn btn-primary btn-add-to-cart mt-2" id="add_to_cart_<?php echo $product['id']; ?>" onclick="addToCart(<?php echo $product['id']; ?>)">Ajouter au panier</button>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -124,3 +119,34 @@ if(isset($_GET['cat'])) {
 </div>
 
 <?php include 'php/footer.php'; ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    function addToCart(productId) {
+        var quantity = document.querySelector(`input[name="quantity_${productId}"]`).value;
+        $.ajax({
+            type: 'POST',
+            url: 'php/add_to_cart.php',
+            data: {
+                productId: productId,
+                quantity: quantity
+            },
+            success: function(response) {
+                var responseData = JSON.parse(response);
+                if (responseData.success == 1) {
+                    var quantity = parseInt(responseData.quantity);
+                    var old_stock = parseInt($(`#stock_${productId}`).text());
+                    var cart_nb_products = parseInt($(`#stock_${productId}`).text());
+                    $(`#stock_${productId}`).text(old_stock - quantity);
+                    $(`#input_quantity_${productId}`).val('0');
+                    $(`#icon-panier-value`).html(responseData.cart_nb_products);
+                    $(`#btn_minus_${productId}`).prop('disabled', true); 
+                    $(`#add_to_cart_${productId}`).prop('disabled', true); 
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>
