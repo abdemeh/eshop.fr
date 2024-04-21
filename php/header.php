@@ -179,7 +179,7 @@ window.addEventListener('load', function () {
                             if (isset($_SESSION["user_id"])) {
                                 $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
                                 if (file_exists($userImagePath)) {
-                                    echo '<li class="nav-link"><a href="profile.php"><img class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
+                                    echo '<li class="nav-link"><a href="profile.php"><img id="small-icon-user-image" class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
                                 } else {
                                     echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
                                 }
@@ -192,7 +192,7 @@ window.addEventListener('load', function () {
                             if (isset($_SESSION["user_id"])) {
                                 $userImagePath = "img/users/{$_SESSION["user_id"]}.jpg";
                                 if (file_exists($userImagePath)) {
-                                    echo '<li class="nav-link"><a href="profile.php"><img class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
+                                    echo '<li class="nav-link"><a href="profile.php"><img id="small-icon-user-image" class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
                                 } else {
                                     echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
                                 }

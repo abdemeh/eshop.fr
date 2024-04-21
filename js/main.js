@@ -360,7 +360,7 @@ function changePage(tableId, paginationId, pageNumber, rowsPerPage) {
     setupPagination(tableId, paginationId, pageNumber, rowsPerPage);
 }
 
-changePage("productsTable", "pagination_productsTable", 1, 5);
+changePage("productsTable", "pagination_productsTable", 1, 4);
 changePage("commandeTable", "pagination_commandeTable", 1, 5);
 // changePage("paymentTable", "pagination_paymentTable", 1, 5);
 // changePage("panierTable", "pagination_panierTable", 1, 5);

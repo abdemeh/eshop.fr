@@ -1,24 +1,31 @@
 <?php
 session_start();
 
-// Check if file is uploaded
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['destination_folder']) && isset($_POST['original_page']) && isset($_FILES['file'])) {
     $file = $_FILES['file'];
     $fileName = $_SESSION['user_id'] . '.jpg';
     if(isset($_POST['product_id'])){
         $fileName = $_POST['product_id'] . '.jpg';
     }
-    $original_page=$_POST["original_page"];
-    $destination_folder=$_POST["destination_folder"];
+    $original_page = $_POST["original_page"];
+    $destination_folder = $_POST["destination_folder"];
     $destination = $destination_folder . $fileName;
-    // Move the uploaded file to the destination folder
-    echo $original_page;
+    
     if (move_uploaded_file($file['tmp_name'], $destination)) {
-        header('Location: '.$original_page.'?success=Fichier téléchargé avec succès.');
+        echo json_encode([
+            'success' => 1,
+            'message' => 'Fichier téléchargé avec succès.'
+        ]);
     } else {
-        header('Location: '.$original_page.'?error=Échec du téléchargement du fichier.');
+        echo json_encode([
+            'success' => 0,
+            'message' => 'Échec du téléchargement du fichier.'
+        ]);
     }
 } else {
-    header('Location: ../profile.php?error=Erreur...');
+    echo json_encode([
+        'success' => 0,
+        'message' => 'Erreur du téléchargement du fichier.'
+    ]);
 }
 ?>

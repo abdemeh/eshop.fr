@@ -7,188 +7,214 @@ include 'php/bddData.php';
 include_once 'php/main.php';
 
 $metiers = getMetiers($conn);
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nom = $_POST["nom"];
-    $prenom = $_POST["prenom"];
-    $email = $_POST["email"];
-    $mdp = $_POST["mdp"];
-    $genre = isset($_POST["genre"])? $_POST["genre"]: "";
-    $date_naissance = $_POST["date_naissance"];
-    $metier = $_POST["metier"];
-    $errors = [];
-
-    if (empty($nom)) {$errors["nom"] ="Veuillez entrer un nom!";}
-    if (empty($prenom)) {$errors["prenom"] ="Veuillez entrer un prénom!";}
-    if (empty($email)) {$errors["email"] ="Veuillez entrer un email!";} elseif (!filter_var($email,FILTER_VALIDATE_EMAIL)) {$errors["email"] ="Veuillez entrer un email valide!";}
-    if (empty($mdp)) {$errors["mdp"] ="Veuillez entrer un mot de passe!";}
-    if (empty($date_naissance)) {$errors["date_naissance"] ="Veuillez entrer une date!";}
-    if (empty($genre)) {$errors["genre"] ="Veuillez sélectionner un genre!";}
-    if ($metier == "Sélectionner") {$errors["metier"] ="Veuillez choisir un métier!";
-    }
-    if (!empty($errors)) {
-        echo "<script>";
-        echo "function displayErrors() {";
-        foreach ($errors as $field => $error) {
-            echo '$("#error-'.$field.'").html("'.$error.'");';
-            echo '$("#input-' .$field.'").addClass("is-invalid");';
-        }
-        echo "}</script>";
-    }else{
-        $sql = "UPDATE users SET nom='$nom', prenom='$prenom', email='$email', mdp='".md5($mdp)."', genre='$genre', date_naissance='$date_naissance', metier_id=$metier WHERE id={$_SESSION['user_id']}";
-        if ($conn->query($sql) === TRUE) {
-            $conn->close();
-            header('Location: profile.php?success=Données utilisateur mises à jour avec succès.');
-        } else {
-            header('Location: profile.php?error=Erreur lors de la mise à jour des données utilisateur.');
-        }
-        exit();
-    }
-}
-
 $userData = getUserData($_SESSION['user_id'], $conn);
-
-$conn->close();
 
 include 'php/header.php';
 ?>
+<div class="container">
+    <h1 class="text-center font-weight-bold">Mon Profile</h1>
     <div class="container">
-        <h1 class="text-center font-weight-bold">Mon Profile</h1>
-        <div class="container">
-            <div class="">
-                
-                
-                <div class="row">
-                    <div class="col-3"></div>
-                    <div class="col-6 card p-4 mt-2">
-                        <div class="row">
-                            <div class="col-12">
-                                <div id="error-message">
-                                    <?php if (isset($_GET["error"])){
-                                        echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
-                                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                                    }elseif(isset($_GET["success"])){
-                                        echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
-                                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                                    } 
-                                    ?>
+        <div class="">
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-6 card p-4 mt-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="error-message"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-md-6 d-flex justify-content-center">
+                            <div class="position-relative">
+                                <img id="profile-pic" class="logo rounded-circle p-3 mb-2" src="<?php
+                                if(isset($_SESSION['user_id'])){
+                                    $userImagePath = "img/users/{$_SESSION['user_id']}.jpg";
+                                    if (file_exists($userImagePath)) {
+                                        echo $userImagePath;
+                                    } else {
+                                        echo "img/profile.svg";
+                                    }
+                                } else {
+                                    echo "img/profile.svg";
+                                }
+                                ?>" height="200px" width="200px" class="p-4" alt="">
+                                <div id="edit-image" class="position-absolute top-0 end-0">
+                                    <i class="fa fa-edit edit-icon"></i>
                                 </div>
+                                <form id="edit-image-form" method="POST" enctype="multipart/form-data">
+                                    <input type="file" name="file" id="edit-image-input" accept=".jpg" hidden>
+                                    <input type="hidden" name="destination_folder" value="../img/users/">
+                                    <input type="hidden" name="original_page" value="../profile.php">
+                                </form>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-3"></div>
-                                <div class="col-md-6 d-flex justify-content-center">
-                                    <div class="position-relative">
-                                        <img id="profile-pic" class="logo rounded-circle p-3 mb-2" src="<?php
-                                        if(isset($_SESSION['user_id'])){
-                                            $userImagePath = "img/users/{$_SESSION['user_id']}.jpg";
-                                            if (file_exists($userImagePath)) {
-                                                echo $userImagePath;
-                                            } else {
-                                                echo "img/profile.svg";
-                                            }
-                                        } else {
-                                            echo "img/profile.svg";
-                                        }
-                                        ?>" height="200px" width="200px" class="p-4" alt="">
-                                        <div id="edit-image" class="position-absolute top-0 end-0">
-                                            <i class="fa fa-edit edit-icon"></i>
-                                        </div>
-                                        <form id="edit-image-form" action="php/upload_image.php" method="POST" enctype="multipart/form-data">
-                                            <input type="file" name="file" id="edit-image-input" accept=".jpg" hidden>
-                                            <input type="hidden" name="destination_folder" value="../img/users/">
-                                            <input type="hidden" name="original_page" value="../profile.php">
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <form id="profile-form" class="" method="post">
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <div class="has-validation">
-                                        <h6 class="text-muted">Nom</h6>
-                                        <input id="input-nom" name="nom" class="form-control input-only-text" type="text" value="<?php echo $userData['nom'] ?? ''; ?>">
-                                    </div>
-                                    <div class="text-danger" id="error-nom"></div>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <div class="has-validation">
-                                        <h6 class="text-muted">Prenom</h6>
-                                        <input id="input-prenom" name="prenom" class="form-control input-only-text" type="text" value="<?php echo $userData['prenom'] ?? ''; ?>">
-                                    </div>
-                                    <div class="text-danger" id="error-prenom"></div>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <div class="has-validation">
-                                        <h6 class="text-muted">E-mail</h6>
-                                        <input id="input-email" name="email" class="form-control" type="email" value="<?php echo $userData['email'] ?? ''; ?>">
-                                    </div>
-                                    <div class="text-danger" id="error-email"></div>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <div class="has-validation">
-                                        <h6 class="text-muted">Mot de passe</h6>
-                                        <input id="input-mdp" name="mdp" class="form-control" type="password" value="<?php echo $userData['mdp'] ?? ''; ?>">
-                                    </div>
-                                    <div class="text-danger" id="error-mdp"></div>
-                                </div>
-                                <div class="form-group col-12">
-                                    <div class="has-validation">
-                                        <h6 class="text-muted">Genre</h6>
-                                        <div class="form-check inline">
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input <?php if($userData['genre']=="M"){echo "checked";}?> type="radio" id="customRadioInline1" name="genre" value="M" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline1">Masculin</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-check inline">
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input <?php if($userData['genre']=="F"){echo "checked";}?> type="radio" id="customRadioInline2" name="genre" value="F" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline2">Féminin</label>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="text-danger" id="error-genre"></div>  
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <div class="has-validation">
-                                        <h6 class="text-muted">Date de naissance</h6>
-                                        <input id="input-date_naissance" type="date"  name="date_naissance" class="form-control" 
-                                        min="<?php echo date('Y-m-d', strtotime('-90 years')); ?>" 
-                                        max="<?php echo date('Y-m-d', strtotime('-16 years')); ?>" 
-                                        value="<?php echo $userData['date_naissance'] ?? ''; ?>"  />
-                                    </div>
-                                    <div class="text-danger" id="error-date_naissance"></div>  
-                                </div>
-                                
-                                <div class="form-group col-md-6">
-                                    <h6 class="text-muted">Métier</h6>
-                                    <select id="input-metier" class="form-select" name="metier" aria-label="Métier">
-                                        <option hidden value="Sélectionner">Sélectionner</option>
-                                        <?php
-                                        foreach ($metiers as $metier) {
-                                            $selected = ($userData['metier_id'] == $metier['id']) ? "selected" : "";
-                                            echo '<option ' . $selected . ' value="' . $metier['id'] . '">' . $metier['libelle'] . '</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                    <div class="text-danger" id="error-metier"></div>
-                                </div>                       
-                            </div>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        </form>
                     </div>
+                    <form id="profile-form" class="" method="post">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <div class="has-validation">
+                                    <h6 class="text-muted">Nom</h6>
+                                    <input id="input-nom" name="nom" class="form-control input-only-text" type="text" value="<?php echo $userData['nom'] ?? ''; ?>">
+                                </div>
+                                <div class="text-danger" id="error-nom"></div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="has-validation">
+                                    <h6 class="text-muted">Prenom</h6>
+                                    <input id="input-prenom" name="prenom" class="form-control input-only-text" type="text" value="<?php echo $userData['prenom'] ?? ''; ?>">
+                                </div>
+                                <div class="text-danger" id="error-prenom"></div>
+                            </div>
+                            <div class="form-group col-md-7">
+                                <div class="has-validation">
+                                    <h6 class="text-muted">E-mail</h6>
+                                    <input id="input-email" name="email" class="form-control" type="email" value="<?php echo $userData['email'] ?? ''; ?>">
+                                </div>
+                                <div class="text-danger" id="error-email"></div>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <div class="has-validation">
+                                    <h6 class="text-muted">Mot de passe</h6>
+                                    <input id="input-mdp" name="mdp" class="form-control" type="password" value="<?php echo $userData['mdp'] ?? ''; ?>">
+                                </div>
+                                <div class="text-danger" id="error-mdp"></div>
+                            </div>
+                            <div class="form-group col-12">
+                                <div class="has-validation">
+                                    <h6 class="text-muted">Genre</h6>
+                                    <div class="form-check inline">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input <?php if($userData['genre']=="M"){echo "checked";}?> type="radio" id="customRadioInline1" name="genre" value="M" class="custom-control-input">
+                                            <label class="custom-control-label" for="customRadioInline1">Masculin</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check inline">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input <?php if($userData['genre']=="F"){echo "checked";}?> type="radio" id="customRadioInline2" name="genre" value="F" class="custom-control-input">
+                                            <label class="custom-control-label" for="customRadioInline2">Féminin</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-danger" id="error-genre"></div>  
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="has-validation">
+                                    <h6 class="text-muted">Date de naissance</h6>
+                                    <input id="input-date_naissance" type="date"  name="date_naissance" class="form-control" 
+                                    min="<?php echo date('Y-m-d', strtotime('-90 years')); ?>" 
+                                    max="<?php echo date('Y-m-d', strtotime('-16 years')); ?>" 
+                                    value="<?php echo $userData['date_naissance'] ?? ''; ?>"  />
+                                </div>
+                                <div class="text-danger" id="error-date_naissance"></div>  
+                            </div>
+                            <div class="form-group col-md-6">
+                                <h6 class="text-muted">Métier</h6>
+                                <select id="input-metier" class="form-select" name="metier" aria-label="Métier">
+                                    <option hidden value="Sélectionner">Sélectionner</option>
+                                    <?php
+                                    foreach ($metiers as $metier) {
+                                        $selected = ($userData['metier_id'] == $metier['id']) ? "selected" : "";
+                                        echo '<option ' . $selected . ' value="' . $metier['id'] . '">' . $metier['libelle'] . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <div class="text-danger" id="error-metier"></div>
+                            </div>                       
+                        </div>
+                        <button type="button" id="submit-profile" class="btn btn-primary">Enregistrer</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    </div>
+</div>
+</div>
+</div>
+</div>
 <?php include 'php/footer.php'; ?>
 <script>
-// Call the displayErrors function after the page has loaded
-document.addEventListener('DOMContentLoaded', function() {
-    displayErrors();
-});
+    $(document).ready(function() {
+        $('#submit-profile').click(function(e) {
+            e.preventDefault();
+
+            if (!validateFormInputs()) {
+                return;
+            }
+        
+            $.ajax({
+                type: "POST",
+                url: "php/update_profile.php",
+                data: $("#profile-form").serialize(),
+                success: function(response) {
+                    $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">Données utilisateur enregistrés avec succès.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                },
+                error: function(xhr, status, error) {
+                    $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">Erreur dans l\'enregistrement des données.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                }
+            });
+        });
+        $('#edit-image-form').submit(function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: 'POST',
+                url: 'php/upload_image.php',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    var img = $('#profile-pic');
+                    var img_user = $('#small-icon-user-image');
+                    var src = img.attr('src');
+                    img.attr('src', src + '?' + new Date().getTime());
+                    img_user.attr('src', src + '?' + new Date().getTime());
+                    $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">Image téléchargé avec succès.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                },
+                error: function(xhr, status, error) {
+                    $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">Erreur dans le téléchargement de l\'image.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                }
+            });
+        });
+    });
+
+    function validateFormInputs() {
+        var isValid = true;
+
+        var fields = [
+            { inputId: '#input-metier', errorId: '#error-metier', errorMessage: 'Veuillez choisir une option.' },
+            { inputId: '#input-nom', errorId: '#error-nom', errorMessage: 'Veuillez entrer un nom.' },
+            { inputId: '#input-prenom', errorId: '#error-prenom', errorMessage: 'Veuillez entrer un prénom.' },
+            { inputId: '#input-email', errorId: '#error-email', errorMessage: 'Veuillez entrer un email.' },
+            { inputId: '#input-mdp', errorId: '#error-mdp', errorMessage: 'Veuillez entrer un mot de passe.' },
+            { inputId: '#input-date_naissance', errorId: '#error-date_naissance', errorMessage: 'Veuillez entrer une date.' },
+        ];
+
+        fields.forEach(function(field) {
+            var inputValue = $.trim($(field.inputId).val());
+            var errorElement = $(field.errorId);
+
+            if (inputValue === '' || inputValue === 'Sélectionner') {
+                errorElement.html(field.errorMessage);
+                $(field.inputId).addClass('is-invalid');
+                isValid = false;
+            } else {
+                errorElement.html('');
+                $(field.inputId).removeClass('is-invalid');
+            }
+        });
+
+        if ($('input[name="genre"]:checked').length === 0) {
+            $('#error-genre').html('Veuillez choisir un genre.');
+            $('input[name="genre"]').addClass('is-invalid');
+            isValid = false;
+        } else {
+            $('#error-genre').html('');
+            $('input[name="genre"]').removeClass('is-invalid');
+        }
+
+        return isValid;
+    }
 </script>

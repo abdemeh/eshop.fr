@@ -118,39 +118,30 @@ $conn->close();
 </div>
 </div>
 <?php include "php/footer.php"; ?>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
     $('#contact-form').submit(function (e) {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault();
         
-        // Validate form inputs
         if (!validateFormInputs()) {
-            return; // Exit function if inputs are not valid
+            return;
         }
 
-        // Serialize form data
         var formData = $(this).serialize();
 
-        // Send AJAX request
         $.ajax({
             type: 'POST',
-            url: 'php/process_signup.php', // Update with your PHP file handling the form submission
+            url: 'php/process_signup.php',
             data: formData,
-            dataType: 'json', // Expect JSON response from the server
+            dataType: 'json',
             success: function (response) {
-                // Check the response for success or error
                 if (response.success == 1) {
-                    // Successful registration, display success message
                     $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                 } else {
-                    // Registration failed, display error message
                     $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">' + response.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                 }
             },
             error: function (xhr, status, error) {
-                // Handle errors if AJAX request fails
                 console.error(xhr.responseText);
                 $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">An error occurred while processing your request. Please try again later.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
             }
@@ -160,8 +151,6 @@ $(document).ready(function () {
 
 function validateFormInputs() {
     var isValid = true;
-
-    // Define an array of objects containing field information
     var fields = [
         { inputId: '#input-metier', errorId: '#error-metier', errorMessage: 'Veuillez choisir une option.' },
         { inputId: '#input-nom', errorId: '#error-nom', errorMessage: 'Veuillez entrer un nom.' },
@@ -171,7 +160,6 @@ function validateFormInputs() {
         { inputId: '#input-date_naissance', errorId: '#error-date_naissance', errorMessage: 'Veuillez entrer une date.' }
     ];
 
-    // Loop through each field to perform validation
     fields.forEach(function(field) {
         var inputValue = $.trim($(field.inputId).val());
         var errorElement = $(field.errorId);
@@ -186,7 +174,6 @@ function validateFormInputs() {
         }
     });
 
-    // Check if no gender is selected
     if ($('input[name="genre"]:checked').length === 0) {
         $('#error-genre').html('Veuillez choisir un genre.');
         $('input[name="genre"]').addClass('is-invalid');

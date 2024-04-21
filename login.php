@@ -54,7 +54,6 @@
 </div>
 </div>
 <?php include 'php/footer.php'; ?>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
     $('#login-form').submit(function(e) {
@@ -67,7 +66,6 @@ $(document).ready(function() {
             success: function(response) {
                 var jsonResponse = JSON.parse(response);
                 if (jsonResponse.success === 1) {
-                    // $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">' + jsonResponse.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                     if(jsonResponse.role === 'user') {
                         window.location.href = 'index.php';
                     } else if(jsonResponse.role === 'admin') {
