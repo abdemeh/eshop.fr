@@ -9,7 +9,7 @@
     "x_url": "#",
     "host": "smtp-mail.outlook.com",
     "port": 587,
-    "smtp_email": "eshop.fr@outlook.com",
+    "smtp_email": "eshop.fr@hotmail.com",
     "smtp_password": "{WLCEtuM6]=U(6t",
     "smtp_name": "eshop.fr",
     "smtp_secure": "tls"
