@@ -3,7 +3,6 @@ include "php/mail_send.php";
 include "php/main.php";
 include "php/header.php";
 include 'php/bddData.php';
-require "vendor/autoload.php";
 
 $settings = getSettings('settings.json');
 $metiers = getMetiers($conn);

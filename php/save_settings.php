@@ -8,6 +8,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $facebook_url = $_POST['facebook_url'];
     $instagram_url = $_POST['instagram_url'];
     $x_url = $_POST['x_url'];
+    $host = $_POST['host'];
+    $port = $_POST['port'];
+    $smtp_email = $_POST['smtp_email'];
+    $smtp_password = $_POST['smtp_password'];
+    $smtp_name = $_POST['smtp_name'];
+    $smtp_secure = $_POST['smtp_secure'];
 
     if(trim($tva)==""){
         $tva=0;
@@ -23,7 +29,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         "admin_contact_email"=> $email_admin,
         "facebook_url"=> $facebook_url,
         "instagram_url"=> $instagram_url,
-        "x_url"=> $x_url
+        "x_url"=> $x_url,
+        "host"=> $host,
+        "port"=> (int)$port,
+        "smtp_email"=> $smtp_email,
+        "smtp_password"=> $smtp_password,
+        "smtp_name"=> $smtp_name,
+        "smtp_secure"=> $smtp_secure,
     );
     $jsonData = json_encode($settingsData, JSON_PRETTY_PRINT);
 

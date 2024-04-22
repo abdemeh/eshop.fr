@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </html>  
                     ';
         $resultSendCustomEmail = array(false,"");
-        $resultSendCustomEmail = sendCustomEmail($user_email, 'Merci pour votre commande', $email_body);
+        $resultSendCustomEmail = sendCustomEmail($user_email, 'Merci pour votre commande', $email_body, $settings);
         
         if($resultSendCustomEmail[0]==true){
             echo "<script>window.location.href='contact.php?success=Messsage envoyé avec succès';</script>";

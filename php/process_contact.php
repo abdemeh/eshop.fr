@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </html>  
                     ';
 
-        $resultSendCustomEmail = sendCustomEmail($settings['admin_contact_email'], 'Nouveau message de contact de ' . $nom . ' ' . $prenom, $email_body);
+        $resultSendCustomEmail = sendCustomEmail($settings['admin_contact_email'], 'Nouveau message de contact de ' . $nom . ' ' . $prenom, $email_body, $settings);
                     
         if($resultSendCustomEmail[0]==true){
             $response = [

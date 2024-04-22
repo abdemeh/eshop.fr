@@ -120,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </html>';
 
                 // Send the verification email
-                $resultSendVerificationEmail = sendCustomEmail($email, 'Vérification de création de compte sur eshop.fr', $email_body);
+                $resultSendVerificationEmail = sendCustomEmail($email, 'Vérification de création de compte sur eshop.fr', $email_body, $settings);
 
                 // Check if the email was sent successfully
                 if ($resultSendVerificationEmail[0] == true) {

@@ -42,7 +42,14 @@
             'instagram_url' => '',
             'x_url' => '',
             'phone' => '',
-            'admin_contact_email' => ''
+            'admin_contact_email' => '',
+            'host'=> '',
+            'port'=> 000,
+            'smtp_email'=> '',
+            'smtp_password'=> '',
+            'smtp_name'=> '',
+            'smtp_secure'=> 'tls'
+            
         ];
     
         // Check if the settings file exists

@@ -7,24 +7,27 @@ $settings = getSettings('settings.json');
 
 ?>
 <div class="container">
-    <h1 class="text-center font-weight-bold">Paramètres</h1>
     <div class="row">
-        <div class="col-2 mb-2"></div>
-        <div class="col-8 mb-2">
-            <div class="card widget-flat p-1">
-                <div class="card-body">
-                    <form method="post" action="php/save_settings.php">
+        <div class="col-12">
+            <div id="error-message">
+                <?php if (isset($_GET["error"])){
+                    echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                }elseif(isset($_GET["success"])){
+                    echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                } 
+                ?>
+            </div>
+        </div>
+    </div> 
+    <form method="post" action="php/save_settings.php">
+        <div class="row">
+            <div class="col-6 mb-2">
+                <h4 class="font-weight-bold">Général</h4>
+                <div class="card widget-flat p-1">
+                    <div class="card-body">
                         <div class="row">
-                            <div id="error-message">
-                                <?php if (isset($_GET["error"])){
-                                    echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
-                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                                }elseif(isset($_GET["success"])){
-                                    echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
-                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                                } 
-                                ?>
-                            </div>
                             <div class="col-4">
                                 <h6 class="text-muted">Devise</h6>
                                 <select name="devise" id="input-metier" class="form-select" name="metier" aria-label="Métier">
@@ -69,16 +72,60 @@ $settings = getSettings('settings.json');
                                 <input name="x_url" class="form-control" type="text" value="<?php echo $settings['x_url'];?>">
                             </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary w-25">Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+        
+        
+            <div class="col-6 mb-2">
+                <h4 class="font-weight-bold">Paramètres SMTP</h4>
+                <div class="card widget-flat p-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8">
+                                <h6 class="text-muted">Host</h6>
+                                <input name="host" class="form-control" type="text" value="<?php echo $settings['host'];?>">
+                            </div>
+                            <div class="col-4">
+                                <h6 class="text-muted">Port</h6>
+                                <input name="port" class="form-control input-only-numbers" minlength="3" maxlength="3" type="text" value="<?php echo $settings['port'];?>">
                             </div>
                         </div>
-                    </form>
+                        <div class="row mt-3">
+                            <div class="col-7">
+                                <h6 class="text-muted">SMTP email</h6>
+                                <input name="smtp_email" class="form-control" type="text" value="<?php echo $settings['smtp_email'];?>">
+                            </div>
+                            <div class="col-5">
+                                <h6 class="text-muted">SMTP Mot de passe</h6>
+                                <input name="smtp_password" class="form-control" type="password" value="<?php echo $settings['smtp_password'];?>">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                    <h6 class="text-muted">SMTP Nom</h6>
+                                    <input name="smtp_name" class="form-control" type="text" value="<?php echo $settings['smtp_name'];?>">
+                            </div>
+                            <div class="col-6">
+                                    <h6 class="text-muted">SMTP Sécutité</h6>
+                                    <select name="smtp_secure" class="form-select">
+                                        <option <?php if($settings['smtp_secure']=="tls"){echo "selected";}?> value="tls">tls</option>
+                                        <option <?php if($settings['smtp_secure']=="ssl"){echo "selected";}?> value="ssl">ssl</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="row mt-3">
+        <div class="col-4"></div>
+            <div class="col-4">
+                <button type="submit" class="btn btn-primary w-100">Enregistrer</button>
+            </div>
+        </div>
+    </form>
 </div>
 </div>
 </div>

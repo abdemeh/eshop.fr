@@ -6,16 +6,16 @@ use PHPMailer\PHPMailer\Exception;
 // require '../vendor/phpmailer/phpmailer/src/PHPMailer.php';
 // require '../vendor/phpmailer/phpmailer/src/SMTP.php';
 
-function sendCustomEmail($receiverEmail, $subject, $body) {
+function sendCustomEmail($receiverEmail, $subject, $body, $settings) {
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
-        $mail->Host = 'smtp-mail.outlook.com';
-        $mail->Port = 587;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Host = $settings['host'];
+        $mail->Port = (int)$settings['port'];
+        $mail->SMTPSecure = $settings['smtp_secure'];
         $mail->SMTPAuth = true;
-        $mail->Username = 'eshop.fr@outlook.com';
-        $mail->Password = '{WLCEtuM6]=U(6t';
+        $mail->Username = $settings['smtp_email'];
+        $mail->Password = $settings['smtp_password'];
 
         $mail->setFrom('eshop.fr@outlook.com', 'eshop.fr');
         $mail->addAddress($receiverEmail);
