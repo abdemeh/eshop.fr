@@ -311,12 +311,10 @@ include 'php/bddData.php';
 <?php include 'php/footer.php'; ?>
 <script>
     $(document).ready(function() {
-    // Trigger file input click when the image is clicked
     $('#product-image').click(function() {
         $('#image-file').click();
     });
 
-    // Preview the selected image
     $('#image-file').change(function() {
         var file = this.files[0];
         if (file) {
@@ -328,7 +326,6 @@ include 'php/bddData.php';
         }
     });
 
-    // Submit the form via AJAX
     $('.edit-image-form').submit(function(e) {
         e.preventDefault();
         var formData = new FormData(this);
