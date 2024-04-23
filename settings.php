@@ -1,5 +1,4 @@
 <?php
-
 include 'php/header.php';
 include_once 'php/main.php';
 
@@ -9,19 +8,10 @@ $settings = getSettings('settings.json');
 <div class="container">
     <div class="row">
         <div class="col-12">
-            <div id="error-message">
-                <?php if (isset($_GET["error"])){
-                    echo '<div class="alert alert-danger alert-dismissible" role="alert">'.htmlspecialchars($_GET["error"]).
-                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                }elseif(isset($_GET["success"])){
-                    echo '<div class="alert alert-success alert-dismissible" role="alert">'.htmlspecialchars($_GET["success"]).
-                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-                } 
-                ?>
-            </div>
+            <div id="error-message"></div>
         </div>
     </div> 
-    <form method="post" action="php/save_settings.php">
+    <form id="settings-form" method="post" action="php/save_settings.php">
         <div class="row">
             <div class="col-6 mb-2">
                 <h4 class="font-weight-bold">Général</h4>
@@ -130,3 +120,29 @@ $settings = getSettings('settings.json');
 </div>
 </div>
 <?php include 'php/footer.php'; ?>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("settings-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('php/save_settings.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">Toutes les paramètres sont enregistrés.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            } else {
+                $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">Erreur dans l\'enregistrement des paramètres.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            }
+        })
+        .catch(error => {
+            $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">Erreur dans l\'enregistrement des paramètres.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        });
+    });
+});
+</script>

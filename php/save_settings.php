@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json'); // Set response content type to JSON
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $devise = $_POST['devise'];
     $tva = $_POST['tva'];
@@ -15,40 +17,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $smtp_name = $_POST['smtp_name'];
     $smtp_secure = $_POST['smtp_secure'];
 
-    if(trim($tva)==""){
-        $tva=0;
+    if (trim($tva) == "") {
+        $tva = 0;
     }
-    if(trim($livraison)==""){
-        $livraison=0;
+    if (trim($livraison) == "") {
+        $livraison = 0;
     }
     $settingsData = array(
         "devise" => $devise,
         "tva" => $tva,
         "livraison" => $livraison,
-        "phone"=> $tel,
-        "admin_contact_email"=> $email_admin,
-        "facebook_url"=> $facebook_url,
-        "instagram_url"=> $instagram_url,
-        "x_url"=> $x_url,
-        "host"=> $host,
-        "port"=> (int)$port,
-        "smtp_email"=> $smtp_email,
-        "smtp_password"=> $smtp_password,
-        "smtp_name"=> $smtp_name,
-        "smtp_secure"=> $smtp_secure,
+        "phone" => $tel,
+        "admin_contact_email" => $email_admin,
+        "facebook_url" => $facebook_url,
+        "instagram_url" => $instagram_url,
+        "x_url" => $x_url,
+        "host" => $host,
+        "port" => (int)$port,
+        "smtp_email" => $smtp_email,
+        "smtp_password" => $smtp_password,
+        "smtp_name" => $smtp_name,
+        "smtp_secure" => $smtp_secure,
     );
     $jsonData = json_encode($settingsData, JSON_PRETTY_PRINT);
 
     $filePath = "../settings.json";
     if (file_put_contents($filePath, $jsonData) !== false) {
-        header('Location: ../settings.php?success=Paramètres enregistrés.');
-        exit;
+        echo json_encode(array("success" => true));
     } else {
-        header('Location: ../settings.php?error=Erreur lors de l\'enregistrement des paramètres.');
-        exit;
+        echo json_encode(array("success" => false, "message" => "Erreur lors de l'enregistrement des paramètres."));
     }
 } else {
-    header('Location: ../settings.php');
-    exit;
+    echo json_encode(array("success" => false, "message" => "La requête n'est pas de type POST."));
 }
 ?>
