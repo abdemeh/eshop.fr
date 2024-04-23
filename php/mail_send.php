@@ -17,7 +17,7 @@ function sendCustomEmail($receiverEmail, $subject, $body, $settings) {
         $mail->Username = $settings['smtp_email'];
         $mail->Password = $settings['smtp_password'];
 
-        $mail->setFrom($settings['smtp_email'], $settings['smtp_name']);
+        $mail->setFrom('eshop.fr@outlook.com', 'eshop.fr');
         $mail->addAddress($receiverEmail);
 
         $mail->isHTML(true);
