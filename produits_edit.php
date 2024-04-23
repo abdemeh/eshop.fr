@@ -309,3 +309,48 @@ include 'php/bddData.php';
                 </div>
             </div>
 <?php include 'php/footer.php'; ?>
+<script>
+    $(document).ready(function() {
+    $('#product-image').click(function() {
+        $('#image-file').click();
+    });
+
+    $('#image-file').change(function() {
+        var file = this.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#product-image').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    $('.edit-image-form').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        var img = $(this).find('img');
+        var src = img.attr('src');
+        $.ajax({
+                type: 'POST',
+                url: 'php/upload_image.php',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json', 
+                success: function(response) {
+                    if(response.success){
+                        $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">'+response.message+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        img.attr('src', src + '?' + new Date().getTime());
+                    }else{
+                        $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">'+response.message+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">'+response.message+' '+error+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                }
+            });
+    });
+});
+
+</script>

@@ -1,5 +1,6 @@
 (function($) {
     "use strict";
+    // Fonction pour ajuster la hauteur des éléments à la taille de la fenêtre
     var fullHeight = function() {
         $('.js-fullheight').css('height', $(window).height());
         $(window).resize(function() {
@@ -7,14 +8,13 @@
         });
     };
     fullHeight();
+    // Gestion du clic sur l'icône de basculement du volet latéral
     $('#sidebarCollapse').on('click', function() {
         $('#sidebar').toggleClass('active');
     });
 })(jQuery);
 
-
-
-//Fonction zoom image
+// Fonction de zoom sur les images
 $('.zoomable-image').click(function() {
     var imageURL = $(this).attr('src');
     var modal = $('<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">\
@@ -34,28 +34,30 @@ $('.zoomable-image').click(function() {
 });
 
 $(document).ready(function() {
+    // Gestion du clic sur le bouton de basculement du menu
     $('.toggle').on("click", function() {
         $('nav').toggleClass("close");
     });
 });
-//Import csv trigger
+
+// Gestion du déclenchement de l'importation d'un fichier CSV
 $(document).ready(function() {
-    // Trigger file input click event when button is clicked
+    // Déclenche le clic sur le bouton de sélection de fichier lorsqu'un bouton est cliqué
     $('#button-products-csv').click(function() {
         $('#input-products-csv').trigger('click');
     });
 
-    // Submit form when file is selected
+    // Soumet le formulaire lorsqu'un fichier est sélectionné
     $('#input-products-csv').change(function() {
-        // Check if file is selected
+        // Vérifie si un fichier est sélectionné
         if ($(this).val() !== '') {
-            // Submit the form
+            // Soumet le formulaire
             $('#input-products-csv-form').submit();
         }
     });
 });
 
-//Edit product images
+// Édition des images de produit
 $(document).ready(function() {
     $('.edit-image').click(function() {
         $(this).siblings('.edit-image-input').trigger('click');
@@ -66,7 +68,7 @@ $(document).ready(function() {
     });
 });
 
-//Edit profile image
+// Édition de l'image de profil
 $(document).ready(function() {
     $('#edit-image').click(function() {
         $('#edit-image-input').trigger('click');
@@ -77,8 +79,7 @@ $(document).ready(function() {
     });
 });
 
-//Show and hide ajouter produit
-
+// Afficher et masquer l'ajout de produit
 $('#btn-ajouter-produit').click(function() {
     $('#tr-ajouter-produit').removeAttr('hidden');
 });
@@ -87,8 +88,7 @@ $('#btn-hide-produit').click(function() {
     $('#form-ajouter-produit').reset();
 });
 
-//Show and hide ajouter categorie
-
+// Afficher et masquer l'ajout de catégorie
 $('#btn-ajouter-categorie').click(function() {
     $('#tr-ajouter-categorie').removeAttr('hidden');
 });
@@ -97,7 +97,7 @@ $('#btn-hide-categorie').click(function() {
     $('#form-ajouter-categorie').reset();
 });
 
-//Cacher Stock
+// Cacher ou afficher le stock
 $("#btn-cacher-stock").click(function() {
     if ($(this).text() === "Cacher stock") {
         $(".table-stock").attr("hidden", true);
@@ -108,7 +108,7 @@ $("#btn-cacher-stock").click(function() {
     }
 });
 
-//Le Stock choisi est le maximum - Button minus et plus desactivation
+// Désactivation des boutons "-" et "+" si nécessaire en fonction du stock disponible
 $(document).ready(function () {
     $('.quantity').on('input', function () {
         var maxStock = parseInt($(this).closest('tr').find('.table-stock').text());
@@ -133,7 +133,7 @@ $(document).ready(function () {
         input.trigger('input');
     });
 
-    // Function to update button state
+    // Fonction pour mettre à jour l'état des boutons
     function updateButtonState(input) {
         var currentValue = parseInt(input.val());
         var minusButton = input.closest('.input-group-wrapper').find('.btn-minus');
@@ -157,8 +157,8 @@ $(document).ready(function () {
     }
 });
 
- //Recherche dans tableau
- $(document).ready(function () {
+// Recherche dans un tableau
+$(document).ready(function () {
     $('#searchInput').on('input', function () {
         var searchText = $(this).val().toLowerCase();
         $('#productTable tbody tr').each(function () {
@@ -172,7 +172,7 @@ $(document).ready(function () {
     });
 });
 
-//Tableau de produits pagination
+// Pagination d'un tableau de produits
 function showRows(tableId, pageNumber, rowsPerPage) {
     var table = document.getElementById(tableId);
     var rows = table.getElementsByTagName("tbody")[0].rows;
@@ -186,7 +186,7 @@ function showRows(tableId, pageNumber, rowsPerPage) {
     }
 }
 
-//Formater inputs
+// Formater les entrées dans les champs de formulaire
 $(document).ready(function() {
     $('.input-only-numbers').on('input', function() {
         $(this).val($(this).val().replace(/\D/g, ''));
@@ -208,7 +208,7 @@ $(document).ready(function() {
     });
 });
 
-//Paypal ou credit card
+// Sélection du mode de paiement
 $(document).ready(function(){
     $('#btn-card').click(function(){
         $('#mode_paiement').attr('value', 'card');
@@ -218,6 +218,7 @@ $(document).ready(function(){
     });
 });
 
+// Configuration de la pagination d'un tableau
 function setupPagination(tableId, paginationId, currentPage, rowsPerPage) {
     var table = document.getElementById(tableId);
     var totalRows = table.getElementsByTagName("tbody")[0].rows.length;
@@ -249,6 +250,7 @@ function setupPagination(tableId, paginationId, currentPage, rowsPerPage) {
     pagination.appendChild(nextButton);
 }
 
+// Fonctions pour gérer la pagination précédente, suivante et la modification de page
 function prevPage(tableId, paginationId, rowsPerPage) {
     var currentPage = parseInt(document.querySelector('#' + paginationId + ' .page-item.active .page-link').textContent);
     if (currentPage > 1) {
@@ -277,11 +279,8 @@ function changePage(tableId, paginationId, pageNumber, rowsPerPage) {
 
 changePage("productsTable", "pagination_productsTable", 1, 4);
 changePage("commandeTable", "pagination_commandeTable", 1, 5);
-// changePage("paymentTable", "pagination_paymentTable", 1, 5);
-// changePage("panierTable", "pagination_panierTable", 1, 5);
 
-
-
+// Initialisation des tooltips
 $(function() {
-$('[data-toggle="tooltip"]').tooltip()
-})
+    $('[data-toggle="tooltip"]').tooltip()
+});

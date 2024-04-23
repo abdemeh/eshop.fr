@@ -165,16 +165,21 @@ include 'php/header.php';
                 data: formData,
                 processData: false,
                 contentType: false,
+                dataType: 'json', 
                 success: function(response) {
                     var img = $('#profile-pic');
                     var img_user = $('#small-icon-user-image');
                     var src = img.attr('src');
                     img.attr('src', src + '?' + new Date().getTime());
                     img_user.attr('src', src + '?' + new Date().getTime());
-                    $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">Image téléchargé avec succès.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    if(response.success){
+                        $('#error-message').html('<div class="alert alert-success alert-dismissible" role="alert">'+response.message+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    }else{
+                        $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">'+response.message+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    }
                 },
                 error: function(xhr, status, error) {
-                    $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">Erreur dans le téléchargement de l\'image.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    $('#error-message').html('<div class="alert alert-danger alert-dismissible" role="alert">'+response.message+' '+error+'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                 }
             });
         });
