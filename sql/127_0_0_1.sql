@@ -233,7 +233,7 @@ INSERT INTO `produits` (`id`, `reference`, `description`, `prix`, `stock`, `cate
 (46, 'T01_I15P', 'iPhone 15 Pro Max', 1184.99, 5, 1),
 (47, 'T02_SGS24', 'Samsung Galaxy S24 Ultra', 1084.99, 8, 1),
 (48, 'T03_X13T', 'Xiaomi 13T', 649.99, 6, 1),
-(49, 'T04_HP60P', 'Huawei P60 Prossss', 999.00, 0, 1),
+(49, 'T04_HP60P', 'Huawei P60 Pro', 999.00, 0, 1),
 (50, 'T05_SGZF4', 'Samsung Galaxy Z Flip 5', 1049.99, 1, 1),
 (51, 'O01_MBP16', 'MacBook Pro 16', 2399.99, 1, 2),
 (52, 'O02_MBA13', 'MacBook Air 13', 1799.99, 3, 2),
@@ -329,18 +329,7 @@ INSERT INTO `users` (`id`, `nom`, `prenom`, `email`, `mdp`, `genre`, `date_naiss
 (135, 'blankawga', 'blankawnecom', '1705flying@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2001-06-08', 2, 'ccce1b7afe865f7abe9b5fd0e4261369', 'user', NULL),
 (133, 'Barakat', 'Khaled', '3502thundering@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-03-05', 1, 'e5c2e805e4359093f71cb07f46117e12', 'user', '2024-04-21 23:47:06'),
 (134, 'blankawga', 'blankawnecom', 'blank531@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2001-06-08', 2, '104d86e389fcdc07ebd127ed4cc42f88', 'user', NULL),
-(129, 'ELMAHDAOUI', 'awgarstone', 'abdellatif.elm.ahdaoui@gmail.com', '81dc9bdb52d04dc20036dbd8313ed055', 'F', '2008-04-09', 4, '2793a62776bb5768bf428d0652178171', 'user', NULL),
-(130, 'fdsf', 'fsdgds', 'abdellatif.elmahdao.ui@gmail.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-04-16', 2, '8c928aeb99cb9c4fbcbd56faedd78192', 'user', NULL),
-(122, 'permanent', 'awgarstone', 'permanent9627@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'F', '2008-04-01', 2, '769436c305ae036cef3f98fd81005a78', 'user', '2024-04-21 01:18:11'),
-(131, 'awgarstone', 'awgarstone', 'sticky6946@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-04-10', 2, 'e66e843dbbb49a1b43ee6a52fd2fadfd', 'user', NULL),
-(132, 'awgarstone', 'awgarstone', '261star@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-04-10', 2, '63ffb2cdbc11416478079a7517871191', 'user', '2024-04-21 17:22:42'),
-(136, 'blankawga', 'blankawnecom', '4086statutory@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2001-06-08', 2, '1a8763af7f3666087b449bae00e15568', 'user', NULL),
-(137, 'blankawga', 'blankawnecom', '86ciel@awgarstone.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2001-06-08', 2, '8a4b0c45cb94dabd4af0668a45924e71', 'user', NULL),
-(138, 'FDSF', 'GFDSGD', 'elma.hdaouia@gmail.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-04-09', 1, '46459a865e70210d5a1667b9fbc083f1', 'user', NULL),
 (139, 'Zhang', 'Clement', 'notableveradis@fthcapital.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2003-01-06', 1, '1227ee0194739bf243f8a0294daaaf86', 'user', NULL),
-(140, 'rgtzty', 'hurytuy', 'abdellatif.elmahdaoui@gmail.comnotableveradis@fthcapital.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-04-12', 1, 'cd6da2dc34b4672f2024bfd99cfb5dda', 'user', NULL),
-(141, 'Zhang', 'Clement', 'geneticgreen@fthcapital.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-04-17', 1, 'd8f95b38f31d94e540ca37b8441f8810', 'user', '2024-04-22 10:39:16'),
-(142, 'fds', 'fgdsg', 'gdsgdsdsgds@gdsgsddgs.com', '81dc9bdb52d04dc20036dbd8313ed055', 'M', '2008-04-10', 1, '98b7298f15ed61203a32c5c1b5a75c2a', 'user', NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

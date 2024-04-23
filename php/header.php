@@ -144,7 +144,7 @@ window.addEventListener('load', function () {
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img src="img/logo.png" alt="">
+                    <img src="img/icon.png" alt="">
                 </span>
                 <div class="text logo-text">
                     <span class="name">eshop.fr</span>
