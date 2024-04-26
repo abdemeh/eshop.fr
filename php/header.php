@@ -18,7 +18,8 @@ if (
     $current_page !== "login.php" &&
     $current_page !== "index.php" &&
     $current_page !== "contact.php" &&
-    $current_page !== "sign_up.php"
+    $current_page !== "sign_up.php" &&
+    $current_page !== "404.php"
 ) {
     header("Location: login.php");
     exit();
@@ -30,7 +31,8 @@ if (
     $current_page !== "settings.php" &&
     $current_page !== "produits_edit.php" &&
     $current_page !== "commandes.php" &&
-    $current_page !== "profile.php" 
+    $current_page !== "profile.php" &&
+    $current_page !== "404.php"
 ) {
     header("Location: admin.php");
     exit();
@@ -115,6 +117,7 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/main.css">
     <meta name="robots" content="noindex, follow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
