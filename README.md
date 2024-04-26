@@ -51,8 +51,5 @@ Ces technologies ont été sélectionnées pour offrir une expérience utilisate
 3. Configurez les paramètres de connexion à la base de données (Utiliser root sans mot de passe pour les tests. (Vous allez trouver les fichiers de sql dans le dossier sql).
 4. Changer les paramètres SMTP (Depuis la page admin ou utilisant config.json)
 
-## 📄 Licence
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
 ## 🎉 Remerciements
 Nous tenons à remercier toute l'équipe pour son travail acharné et sa collaboration sur ce projet.
