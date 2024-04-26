@@ -2,7 +2,7 @@
 Le projet a été préparé par [Abdellatif EL-MAHDAOUI](https://github.com/your_username), Mohamad Amine Koné et Zhang Clément.
 
 ## 📝 Introduction
-eShop-fr est une plateforme de commerce électronique conçue pour offrir une expérience utilisateur fluide tant aux clients qu'aux visiteurs. Le site propose une gamme de fonctionnalités allant de la navigation des produits à la gestion des commandes et des utilisateurs.
+eShop.fr est une plateforme de commerce électronique conçue pour offrir une expérience utilisateur fluide tant aux clients qu'aux visiteurs. Le site propose une gamme de fonctionnalités allant de la navigation des produits à la gestion des commandes et des utilisateurs.
 
 ## 🔗 Accès au Site Web
 Le site web est accessible via le lien suivant : [eshop-fr.online](https://eshop-fr.online).
