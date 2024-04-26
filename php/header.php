@@ -184,10 +184,10 @@ window.addEventListener('load', function () {
                                 if (file_exists($userImagePath)) {
                                     echo '<li class="nav-link"><a href="profile.php"><img id="small-icon-user-image" class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
                                 } else {
-                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Profil</span></a></li>';
                                 }
                             } else {
-                                echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                                echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Profil</span></a></li>';
                             }
                         }
                         else{
@@ -197,7 +197,7 @@ window.addEventListener('load', function () {
                                 if (file_exists($userImagePath)) {
                                     echo '<li class="nav-link"><a href="profile.php"><img id="small-icon-user-image" class="logo rounded-circle ml-3" src="'.$userImagePath.'" height="30px" width="30px" alt=""><span class="text nav-text ml-3">Profil</span></a></li>';
                                 } else {
-                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Contact</span></a></li>';
+                                    echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Profil</span></a></li>';
                                 }
                             } else {
                                 echo '<li class="nav-link"><a href="profile.php"><i class="fa-solid fa-user icon"></i><span class="text nav-text">Profil</span></a></li>';
