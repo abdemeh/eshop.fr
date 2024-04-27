@@ -48,8 +48,9 @@ Ces technologies ont été sélectionnées pour offrir une expérience utilisate
 ## 🛠️ Installation
 1. Clonez le dépôt GitHub : `git clone https://github.com/abdemeh/eshop.fr.git`
 2. Déployez les fichiers sur un serveur web (WAMP par exemple).
-3. Configurez les paramètres de connexion à la base de données (Utiliser root sans mot de passe pour les tests. (Vous allez trouver les fichiers de sql dans le dossier sql).
-4. Changer les paramètres SMTP (Depuis la page admin ou utilisant config.json)
+3. Configurez les paramètres de connexion à la base de données (Utiliser root sans mot de passe pour les tests).
+   Vous allez trouver les fichiers de sql dans le dossier sql.
+5. Changer les paramètres SMTP (Depuis la page admin ou utilisant config.json)
 
 ## 🎉 Remerciements
 Nous tenons à remercier toute l'équipe pour son travail acharné et sa collaboration sur ce projet.
